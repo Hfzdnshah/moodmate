@@ -166,9 +166,9 @@ class _MoodTrendsScreenState extends State<MoodTrendsScreen> {
 
     for (var i = 0; i < entries.length; i++) {
       final entry = entries[i];
-      if (entry.emotion != null && entry.timestamp != null) {
+      if (entry.emotion != null) {
         final value = emotionValues[entry.emotion!.toLowerCase()] ?? 3;
-        final timestamp = entry.timestamp!.toDate();
+        final timestamp = entry.timestamp;
         final daysDiff = timestamp.difference(startDate).inDays.toDouble();
         spots.add(FlSpot(daysDiff, value));
       }
@@ -375,18 +375,15 @@ class _MoodTrendsScreenState extends State<MoodTrendsScreen> {
     // Group entries by date
     final entriesByDate = <DateTime, List<MoodEntry>>{};
     for (final entry in entries) {
-      if (entry.timestamp != null) {
-        final date = DateTime(
-          entry.timestamp!.toDate().year,
-          entry.timestamp!.toDate().month,
-          entry.timestamp!.toDate().day,
-        );
-        entriesByDate.putIfAbsent(date, () => []).add(entry);
-      }
+      final date = DateTime(
+        entry.timestamp.year,
+        entry.timestamp.month,
+        entry.timestamp.day,
+      );
+      entriesByDate.putIfAbsent(date, () => []).add(entry);
     }
 
     final startDate = DateTime.now().subtract(Duration(days: _daysToShow));
-    final endDate = DateTime.now();
 
     return Padding(
       padding: const EdgeInsets.all(16),

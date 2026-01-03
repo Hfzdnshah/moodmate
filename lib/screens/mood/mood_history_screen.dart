@@ -219,12 +219,8 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
 
   Widget _buildMoodCard(MoodEntry entry) {
     final timestamp = entry.timestamp;
-    final dateStr = timestamp != null
-        ? DateFormat('MMM d, yyyy').format(timestamp.toDate())
-        : 'Unknown date';
-    final timeStr = timestamp != null
-        ? DateFormat('h:mm a').format(timestamp.toDate())
-        : '';
+    final dateStr = DateFormat('MMM d, yyyy').format(timestamp);
+    final timeStr = DateFormat('h:mm a').format(timestamp);
 
     final emotion = entry.emotion ?? 'analyzing...';
     final emotionColor = _getEmotionColor(emotion);
@@ -237,7 +233,7 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => MoodEntryDetailScreen(entryId: entry.id!),
+              builder: (context) => MoodEntryDetailScreen(entryId: entry.id),
             ),
           );
         },

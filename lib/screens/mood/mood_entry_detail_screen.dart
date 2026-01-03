@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../models/mood_entry_model.dart';
-import '../../services/mood_entry_service.dart';
 
 class MoodEntryDetailScreen extends StatefulWidget {
   final String entryId;
