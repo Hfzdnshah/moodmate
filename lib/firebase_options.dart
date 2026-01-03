@@ -46,21 +46,21 @@ class DefaultFirebaseOptions {
   // TODO: Replace these placeholder values with your actual Firebase config
   // Get these values from Firebase Console -> Project Settings -> Your apps
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDEMO_KEY_REPLACE_ME',
-    appId: '1:123456789:web:abcdef123456',
-    messagingSenderId: '123456789',
-    projectId: 'your-project-id',
-    authDomain: 'your-project-id.firebaseapp.com',
-    storageBucket: 'your-project-id.appspot.com',
-    measurementId: 'G-XXXXXXXXXX',
+    apiKey: "AIzaSyD2sRrJGl2WkikLLNsf67GymzuyKd1jDuY",
+    authDomain: "mindmate-6b273.firebaseapp.com",
+    projectId: "mindmate-6b273",
+    storageBucket: "mindmate-6b273.firebasestorage.app",
+    messagingSenderId: "773902893944",
+    appId: "1:773902893944:web:42999f63cef7b34c9dfe8d",
+    measurementId: "G-J87XMEP0QV",
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDEMO_KEY_REPLACE_ME',
-    appId: '1:123456789:android:abcdef123456',
-    messagingSenderId: '123456789',
-    projectId: 'your-project-id',
-    storageBucket: 'your-project-id.appspot.com',
+    apiKey: 'AIzaSyD2sRrJGl2WkikLLNsf67GymzuyKd1jDuY',
+    appId: '1:773902893944:android:1c81d75468f374c69dfe8d',
+    messagingSenderId: '773902893944',
+    projectId: "mindmate-6b273",
+    storageBucket: "mindmate-6b273.firebasestorage.app",
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
