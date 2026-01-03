@@ -13,12 +13,12 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final _authService = AuthService();
-  
+
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  
+
   bool _isLoading = false;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
@@ -67,12 +67,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
         // Navigate to login screen after a short delay
         await Future.delayed(const Duration(seconds: 2));
         if (!mounted) return;
-        
+
         Navigator.of(context).pushReplacementNamed('/login');
       }
     } catch (e) {
       if (!mounted) return;
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(e.toString()),
@@ -92,10 +92,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Create Account'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Create Account'), centerTitle: true),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
@@ -106,30 +103,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
               children: [
                 const SizedBox(height: 20),
                 // App logo or title
-                const Icon(
-                  Icons.mood,
-                  size: 80,
-                  color: Colors.deepPurple,
-                ),
+                const Icon(Icons.mood, size: 80, color: Colors.deepPurple),
                 const SizedBox(height: 16),
                 Text(
                   'MoodMate',
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.deepPurple,
-                      ),
+                    fontWeight: FontWeight.bold,
+                    color: Colors.deepPurple,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8),
                 Text(
                   'Create your account to get started',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey[600],
-                      ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 32),
-                
+
                 // Name field
                 TextFormField(
                   controller: _nameController,
@@ -144,7 +137,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   textInputAction: TextInputAction.next,
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Email field
                 TextFormField(
                   controller: _emailController,
@@ -160,7 +153,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   textInputAction: TextInputAction.next,
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Password field
                 TextFormField(
                   controller: _passwordController,
@@ -188,7 +181,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   textInputAction: TextInputAction.next,
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Confirm Password field
                 TextFormField(
                   controller: _confirmPasswordController,
@@ -219,7 +212,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   textInputAction: TextInputAction.done,
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Role selection
                 DropdownButtonFormField<UserRole>(
                   value: _selectedRole,
@@ -231,10 +224,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                   items: const [
-                    DropdownMenuItem(
-                      value: UserRole.user,
-                      child: Text('User'),
-                    ),
+                    DropdownMenuItem(value: UserRole.user, child: Text('User')),
                     DropdownMenuItem(
                       value: UserRole.counsellor,
                       child: Text('Counsellor'),
@@ -249,7 +239,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   },
                 ),
                 const SizedBox(height: 24),
-                
+
                 // Register button
                 ElevatedButton(
                   onPressed: _isLoading ? null : _handleRegister,
@@ -263,9 +253,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ? const SizedBox(
                           height: 20,
                           width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                          ),
+                          child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : const Text(
                           'Create Account',
@@ -273,7 +261,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Login link
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

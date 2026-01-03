@@ -35,6 +35,9 @@ migrate_working_dir/
 /build/
 /coverage/
 
+# Firebase - Uncomment to ignore your actual config (recommended for public repos)
+# lib/firebase_options.dart
+
 # Web related
 lib/generated_plugin_registrant.dart
 

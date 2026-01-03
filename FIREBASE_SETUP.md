@@ -5,6 +5,7 @@
 ### Completed Features
 
 1. **Firebase Dependencies** ✅
+
    - Added firebase_core (^3.8.1)
    - Added firebase_auth (^5.3.4)
    - Added cloud_firestore (^5.5.2)
@@ -12,12 +13,14 @@
    - Added email_validator (^3.0.0)
 
 2. **User Model** ✅
+
    - Created `UserModel` class with id, name, email, role, timestamps
    - Implemented UserRole enum (user, counsellor, admin)
    - Added Firestore serialization/deserialization methods
    - Firestore collection: `users`
 
 3. **Authentication Service** ✅
+
    - Created `AuthService` with complete authentication methods:
      - registerWithEmailAndPassword()
      - signInWithEmailAndPassword()
@@ -29,12 +32,14 @@
    - Automatic user profile creation in Firestore on registration
 
 4. **Form Validation** ✅
+
    - Email validation with regex pattern
    - Password strength validation (min 8 chars, uppercase, lowercase, number, special char)
    - Name validation (min 2 chars, letters/spaces/hyphens only)
    - Confirm password matching validation
 
 5. **Registration UI** ✅
+
    - Full registration form with:
      - Name input
      - Email input
@@ -60,6 +65,7 @@
 **IMPORTANT:** To run the app, you need to configure Firebase:
 
 1. **Create Firebase Project**
+
    - Go to https://console.firebase.google.com/
    - Click "Add project"
    - Name: "moodmate" (or your preferred name)
@@ -67,24 +73,28 @@
    - Click "Create project"
 
 2. **Add Android App**
+
    - Click Android icon
    - Package name: `com.example.moodmate` (from android/app/src/main/AndroidManifest.xml)
    - Download `google-services.json`
    - Place in: `android/app/google-services.json`
 
 3. **Add iOS App**
+
    - Click iOS icon
    - Bundle ID: `com.example.moodmate` (from ios/Runner/Info.plist)
    - Download `GoogleService-Info.plist`
    - Place in: `ios/Runner/GoogleService-Info.plist`
 
 4. **Add Web App**
+
    - Click Web icon
    - App nickname: "moodmate-web"
    - Copy the Firebase configuration
    - Create `lib/firebase_options.dart` using FlutterFire CLI (recommended)
 
 5. **Run FlutterFire CLI (Recommended)**
+
    ```bash
    # Install FlutterFire CLI
    dart pub global activate flutterfire_cli
@@ -92,18 +102,22 @@
    # Configure Firebase for all platforms
    flutterfire configure
    ```
+
    This will automatically:
+
    - Create firebase_options.dart
    - Configure all platforms
    - Set up Firebase initialization
 
 6. **Enable Authentication**
+
    - In Firebase Console, go to Authentication
    - Click "Get started"
    - Enable "Email/Password" provider
    - Click "Save"
 
 7. **Set Up Firestore Database**
+
    - In Firebase Console, go to Firestore Database
    - Click "Create database"
    - Choose "Start in test mode" (change to production rules later)

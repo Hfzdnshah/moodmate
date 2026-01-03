@@ -21,11 +21,8 @@ class AuthService {
   }) async {
     try {
       // Create user with Firebase Auth
-      final UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      final UserCredential userCredential = await _auth
+          .createUserWithEmailAndPassword(email: email, password: password);
 
       final User? user = userCredential.user;
       if (user == null) {
@@ -78,11 +75,8 @@ class AuthService {
     required String password,
   }) async {
     try {
-      final UserCredential userCredential =
-          await _auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      final UserCredential userCredential = await _auth
+          .signInWithEmailAndPassword(email: email, password: password);
 
       final User? user = userCredential.user;
       if (user == null) {
