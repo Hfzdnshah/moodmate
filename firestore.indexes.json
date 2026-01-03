@@ -1,0 +1,53 @@
+{
+	"indexes": [
+		{
+			"collectionGroup": "counsellors",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{ "fieldPath": "status", "order": "ASCENDING" },
+				{ "fieldPath": "name", "order": "ASCENDING" }
+			]
+		},
+		{
+			"collectionGroup": "counsellors",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{ "fieldPath": "specialization", "order": "ASCENDING" },
+				{ "fieldPath": "status", "order": "ASCENDING" }
+			]
+		},
+		{
+			"collectionGroup": "support_requests",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{ "fieldPath": "userId", "order": "ASCENDING" },
+				{ "fieldPath": "createdAt", "order": "DESCENDING" }
+			]
+		},
+		{
+			"collectionGroup": "support_requests",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{ "fieldPath": "counsellorId", "order": "ASCENDING" },
+				{ "fieldPath": "createdAt", "order": "DESCENDING" }
+			]
+		},
+		{
+			"collectionGroup": "support_requests",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{ "fieldPath": "status", "order": "ASCENDING" },
+				{ "fieldPath": "createdAt", "order": "ASCENDING" }
+			]
+		},
+		{
+			"collectionGroup": "support_requests",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{ "fieldPath": "userId", "order": "ASCENDING" },
+				{ "fieldPath": "status", "order": "ASCENDING" }
+			]
+		}
+	],
+	"fieldOverrides": []
+}

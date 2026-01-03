@@ -464,3 +464,251 @@ export const retryMoodAnalysis = functions.https.onCall(
 		}
 	}
 );
+
+// =====================================================
+// Support Request Notifications
+// =====================================================
+
+/**
+ * Send notification to counsellor when a new support request is created
+ */
+export const notifyCounsellorOnNewRequest = functions.firestore
+	.document("support_requests/{requestId}")
+	.onCreate(async (snapshot, context) => {
+		try {
+			const request = snapshot.data();
+			const requestId = context.params.requestId;
+
+			functions.logger.info(
+				`New support request created: ${requestId}`,
+				request
+			);
+
+			// If request is assigned to a specific counsellor
+			if (request.counsellorId) {
+				// Get counsellor's FCM token from users collection
+				const counsellorDoc = await admin
+					.firestore()
+					.collection("users")
+					.doc(request.counsellorId)
+					.get();
+
+				if (!counsellorDoc.exists) {
+					functions.logger.warn(`Counsellor ${request.counsellorId} not found`);
+					return;
+				}
+
+				const counsellorData = counsellorDoc.data();
+				const fcmToken = counsellorData?.fcmToken;
+
+				if (!fcmToken) {
+					functions.logger.warn(
+						`No FCM token for counsellor ${request.counsellorId}`
+					);
+					return;
+				}
+
+				// Get user's name
+				const userDoc = await admin
+					.firestore()
+					.collection("users")
+					.doc(request.userId)
+					.get();
+				const userName = userDoc.exists
+					? userDoc.data()?.name || "A user"
+					: "A user";
+
+				// Send notification
+				const message = {
+					token: fcmToken,
+					notification: {
+						title: "New Support Request",
+						body: `${userName} has requested your support`,
+					},
+					data: {
+						type: "support_request",
+						requestId: requestId,
+						userId: request.userId,
+					},
+					android: {
+						priority: "high" as const,
+					},
+					apns: {
+						payload: {
+							aps: {
+								sound: "default",
+								badge: 1,
+							},
+						},
+					},
+				};
+
+				await admin.messaging().send(message);
+				functions.logger.info(
+					`Notification sent to counsellor ${request.counsellorId}`
+				);
+			} else {
+				// Notify all available counsellors
+				const counsellorsSnapshot = await admin
+					.firestore()
+					.collection("counsellors")
+					.where("status", "==", "available")
+					.get();
+
+				if (counsellorsSnapshot.empty) {
+					functions.logger.warn("No available counsellors found");
+					return;
+				}
+
+				// Get user's name
+				const userDoc = await admin
+					.firestore()
+					.collection("users")
+					.doc(request.userId)
+					.get();
+				const userName = userDoc.exists
+					? userDoc.data()?.name || "A user"
+					: "A user";
+
+				const notificationPromises = counsellorsSnapshot.docs.map(
+					async (counsellorDoc) => {
+						const counsellorId = counsellorDoc.id;
+
+						// Get FCM token from users collection
+						const userDoc = await admin
+							.firestore()
+							.collection("users")
+							.doc(counsellorId)
+							.get();
+
+						if (!userDoc.exists) {
+							return;
+						}
+
+						const userData = userDoc.data();
+						const fcmToken = userData?.fcmToken;
+
+						if (!fcmToken) {
+							functions.logger.warn(
+								`No FCM token for counsellor ${counsellorId}`
+							);
+							return;
+						}
+
+						const message = {
+							token: fcmToken,
+							notification: {
+								title: "New Support Request",
+								body: `${userName} needs support`,
+							},
+							data: {
+								type: "support_request",
+								requestId: requestId,
+								userId: request.userId,
+							},
+							android: {
+								priority: "high" as const,
+							},
+							apns: {
+								payload: {
+									aps: {
+										sound: "default",
+										badge: 1,
+									},
+								},
+							},
+						};
+
+						return admin.messaging().send(message);
+					}
+				);
+
+				await Promise.all(notificationPromises);
+				functions.logger.info(
+					`Notifications sent to ${counsellorsSnapshot.size} counsellors`
+				);
+			}
+		} catch (error) {
+			functions.logger.error("Error sending counsellor notification:", error);
+		}
+	});
+
+/**
+ * Send notification to user when counsellor accepts their support request
+ */
+export const notifyUserOnRequestAccepted = functions.firestore
+	.document("support_requests/{requestId}")
+	.onUpdate(async (change, context) => {
+		try {
+			const before = change.before.data();
+			const after = change.after.data();
+			const requestId = context.params.requestId;
+
+			// Check if status changed to accepted
+			if (before.status !== "accepted" && after.status === "accepted") {
+				functions.logger.info(
+					`Support request ${requestId} was accepted by counsellor ${after.counsellorId}`
+				);
+
+				// Get user's FCM token
+				const userDoc = await admin
+					.firestore()
+					.collection("users")
+					.doc(after.userId)
+					.get();
+
+				if (!userDoc.exists) {
+					functions.logger.warn(`User ${after.userId} not found`);
+					return;
+				}
+
+				const userData = userDoc.data();
+				const fcmToken = userData?.fcmToken;
+
+				if (!fcmToken) {
+					functions.logger.warn(`No FCM token for user ${after.userId}`);
+					return;
+				}
+
+				// Get counsellor's name
+				const counsellorDoc = await admin
+					.firestore()
+					.collection("users")
+					.doc(after.counsellorId)
+					.get();
+				const counsellorName = counsellorDoc.exists
+					? counsellorDoc.data()?.name || "A counsellor"
+					: "A counsellor";
+
+				// Send notification
+				const message = {
+					token: fcmToken,
+					notification: {
+						title: "Support Request Accepted",
+						body: `${counsellorName} has accepted your support request`,
+					},
+					data: {
+						type: "request_accepted",
+						requestId: requestId,
+						counsellorId: after.counsellorId,
+					},
+					android: {
+						priority: "high" as const,
+					},
+					apns: {
+						payload: {
+							aps: {
+								sound: "default",
+								badge: 1,
+							},
+						},
+					},
+				};
+
+				await admin.messaging().send(message);
+				functions.logger.info(`Notification sent to user ${after.userId}`);
+			}
+		} catch (error) {
+			functions.logger.error("Error sending user notification:", error);
+		}
+	});

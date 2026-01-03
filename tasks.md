@@ -144,21 +144,21 @@ This document breaks down the use cases into actionable development tasks, organ
 
 ## 4. Counsellor Features
 
-### Task 4.1: Contact Counsellor (UC-07)
+### Task 4.1: Contact Counsellor (UC-07) ✅
 
 **Priority:** Medium  
 **Dependencies:** Task 1.2
 
-- [ ] Design counsellor contact/request UI
-- [ ] Define counsellor document schema in Firestore
-- [ ] Implement counsellor listing or selection screen using Firestore query
-- [ ] Define support request document structure in Firestore (user_id, counsellor_id, status, timestamp)
-- [ ] Create support request document in Firestore
-- [ ] Implement Firebase Cloud Messaging for counsellor notifications
-- [ ] Define conversation thread collection in Firestore
-- [ ] Link support request to conversation thread using document references
-- [ ] Handle "no counsellor available" scenario
-- [ ] Add request status tracking in Firestore (pending, accepted, completed)
+- [x] Design counsellor contact/request UI
+- [x] Define counsellor document schema in Firestore
+- [x] Implement counsellor listing or selection screen using Firestore query
+- [x] Define support request document structure in Firestore (user_id, counsellor_id, status, timestamp)
+- [x] Create support request document in Firestore
+- [x] Implement Firebase Cloud Messaging for counsellor notifications
+- [x] Define conversation thread collection in Firestore
+- [x] Link support request to conversation thread using document references
+- [x] Handle "no counsellor available" scenario
+- [x] Add request status tracking in Firestore (pending, accepted, completed)
 
 ### Task 4.2: Counsellor Views User Mood Summary (UC-08)
 

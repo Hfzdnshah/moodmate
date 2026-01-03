@@ -5,6 +5,8 @@ import '../../models/user_model.dart';
 import '../mood/mood_entry_screen.dart';
 import '../mood/mood_history_screen.dart';
 import '../mood/mood_trends_screen.dart';
+import '../counsellor/counsellor_list_screen.dart';
+import '../counsellor/support_requests_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -224,13 +226,32 @@ class HomeScreen extends StatelessWidget {
         // Counsellor card
         _buildFeatureCard(
           context,
-          icon: Icons.people,
-          title: 'Find a Counsellor',
+          icon: Icons.support_agent,
+          title: 'Contact Counsellor',
           subtitle: 'Connect with a professional',
           color: Colors.green,
           onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Counsellor matching coming soon')),
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const CounsellorListScreen(),
+              ),
+            );
+          },
+        ),
+        const SizedBox(height: 12),
+
+        // Support requests card
+        _buildFeatureCard(
+          context,
+          icon: Icons.question_answer,
+          title: 'My Support Requests',
+          subtitle: 'View your requests',
+          color: Colors.orange,
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const SupportRequestsScreen(),
+              ),
             );
           },
         ),

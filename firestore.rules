@@ -137,5 +137,91 @@ service cloud.firestore {
     match /admin/{document=**} {
       allow read, write: if isAdmin();
     }
+    
+    // Counsellors collection rules
+    match /counsellors/{counsellorId} {
+      // Anyone authenticated can read counsellor profiles
+      allow read: if isAuthenticated();
+      
+      // Only admins can create counsellor profiles
+      allow create: if isAdmin()
+                    && request.resource.data.keys().hasAll(['name', 'email', 'status', 'createdAt', 'updatedAt']);
+      
+      // Counsellors can update their own profile
+      // Admins can update any counsellor profile
+      allow update: if (isCounsellor() && request.auth.uid == counsellorId)
+                    || isAdmin();
+      
+      // Only admins can delete counsellor profiles
+      allow delete: if isAdmin();
+    }
+    
+    // Support requests collection rules
+    match /support_requests/{requestId} {
+      // Users can read their own support requests
+      // Counsellors can read requests assigned to them or pending requests
+      allow read: if isOwner(resource.data.userId)
+                  || (isCounsellor() && (resource.data.counsellorId == request.auth.uid || resource.data.status == 'pending'))
+                  || isAdmin();
+      
+      // Users can create support requests
+      allow create: if isAuthenticated()
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.keys().hasAll(['userId', 'status', 'createdAt', 'updatedAt'])
+                    && request.resource.data.status == 'pending';
+      
+      // Users can update their own pending requests (to cancel)
+      // Counsellors can accept/update requests
+      // Admins can update any request
+      allow update: if (isOwner(resource.data.userId) && resource.data.status == 'pending')
+                    || (isCounsellor() && (resource.data.counsellorId == request.auth.uid || resource.data.status == 'pending'))
+                    || isAdmin();
+      
+      // Only admins can delete support requests
+      allow delete: if isAdmin();
+    }
+    
+    // Conversation threads collection rules
+    match /conversation_threads/{threadId} {
+      // Users and counsellors can read their own conversation threads
+      allow read: if isAuthenticated()
+                  && (resource.data.userId == request.auth.uid
+                      || resource.data.counsellorId == request.auth.uid)
+                  || isAdmin();
+      
+      // Only the system (Cloud Functions) can create conversation threads
+      allow create: if false; // Created by Cloud Functions
+      
+      // Participants can update thread metadata (e.g., last message time)
+      allow update: if isAuthenticated()
+                    && (resource.data.userId == request.auth.uid
+                        || resource.data.counsellorId == request.auth.uid)
+                    || isAdmin();
+      
+      // Only admins can delete conversation threads
+      allow delete: if isAdmin();
+      
+      // Messages subcollection within conversation threads
+      match /messages/{messageId} {
+        // Participants can read messages in their conversation thread
+        allow read: if isAuthenticated()
+                    && (get(/databases/$(database)/documents/conversation_threads/$(threadId)).data.userId == request.auth.uid
+                        || get(/databases/$(database)/documents/conversation_threads/$(threadId)).data.counsellorId == request.auth.uid)
+                    || isAdmin();
+        
+        // Participants can create messages in their conversation thread
+        allow create: if isAuthenticated()
+                      && request.resource.data.senderId == request.auth.uid
+                      && (get(/databases/$(database)/documents/conversation_threads/$(threadId)).data.userId == request.auth.uid
+                          || get(/databases/$(database)/documents/conversation_threads/$(threadId)).data.counsellorId == request.auth.uid);
+        
+        // Sender can update their own message (e.g., mark as edited)
+        allow update: if isAuthenticated()
+                      && resource.data.senderId == request.auth.uid;
+        
+        // Only admins can delete messages
+        allow delete: if isAdmin();
+      }
+    }
   }
 }
