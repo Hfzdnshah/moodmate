@@ -66,7 +66,7 @@ class _MoodEntryScreenState extends State<MoodEntryScreen> {
         throw Exception('User not authenticated');
       }
 
-      await _moodService.createMoodEntry(
+      final entryId = await _moodService.createMoodEntry(
         userId: userId,
         text: _textController.text.trim(),
       );
@@ -80,12 +80,14 @@ class _MoodEntryScreenState extends State<MoodEntryScreen> {
             'Mood entry saved successfully! AI analysis in progress...',
           ),
           backgroundColor: Colors.green,
-          duration: Duration(seconds: 3),
+          duration: Duration(seconds: 2),
         ),
       );
 
-      // Navigate back to home
-      Navigator.of(context).pop(true);
+      // Navigate to detail screen to see analysis and recommendations
+      Navigator.of(
+        context,
+      ).pushReplacementNamed('/mood-detail', arguments: entryId);
     } catch (e) {
       if (!mounted) return;
 

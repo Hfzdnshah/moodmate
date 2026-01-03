@@ -12,6 +12,7 @@ class MoodEntry {
   final double? confidenceScore;
   final DateTime? analyzedAt;
   final String? analysisStatus; // 'pending', 'completed', 'failed'
+  final List<String>? recommendations; // AI-generated recommendations
 
   MoodEntry({
     required this.id,
@@ -23,6 +24,7 @@ class MoodEntry {
     this.confidenceScore,
     this.analyzedAt,
     this.analysisStatus = 'pending',
+    this.recommendations,
   });
 
   // Convert MoodEntry to Firestore document
@@ -36,6 +38,7 @@ class MoodEntry {
       'confidenceScore': confidenceScore,
       'analyzedAt': analyzedAt != null ? Timestamp.fromDate(analyzedAt!) : null,
       'analysisStatus': analysisStatus,
+      'recommendations': recommendations,
     };
   }
 
@@ -56,6 +59,9 @@ class MoodEntry {
           ? (data['analyzedAt'] as Timestamp).toDate()
           : null,
       analysisStatus: data['analysisStatus'] ?? 'pending',
+      recommendations: data['recommendations'] != null
+          ? List<String>.from(data['recommendations'])
+          : null,
     );
   }
 
@@ -70,6 +76,7 @@ class MoodEntry {
     double? confidenceScore,
     DateTime? analyzedAt,
     String? analysisStatus,
+    List<String>? recommendations,
   }) {
     return MoodEntry(
       id: id ?? this.id,
@@ -81,6 +88,7 @@ class MoodEntry {
       confidenceScore: confidenceScore ?? this.confidenceScore,
       analyzedAt: analyzedAt ?? this.analyzedAt,
       analysisStatus: analysisStatus ?? this.analysisStatus,
+      recommendations: recommendations ?? this.recommendations,
     );
   }
 }

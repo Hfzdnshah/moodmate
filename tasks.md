@@ -97,19 +97,19 @@ This document breaks down the use cases into actionable development tasks, organ
 - [x] Implement fallback/retry mechanism
 - [x] Mark failed analyses as "pending/failed" in Firestore
 
-### Task 2.3: Mood-Based Recommendations (UC-05)
+### Task 2.3: Mood-Based Recommendations (UC-05) ✅
 
 **Priority:** Medium  
 **Dependencies:** Task 2.2
 
-- [ ] Create mood-to-prompt mapping logic in Cloud Function
-- [ ] Design prompts for generating tips/quotes per mood
-- [ ] Call OpenAI API from Cloud Function to generate personalized suggestions
-- [ ] Store generated suggestions in Firestore
-- [ ] Display suggestions to user after mood entry
-- [ ] Implement fallback static tips for each mood category
-- [ ] Handle cases when AI is unavailable
-- [ ] Add option to save favorite suggestions to Firestore
+- [x] Create mood-to-prompt mapping logic in Cloud Function
+- [x] Design prompts for generating tips/quotes per mood
+- [x] Call OpenAI API from Cloud Function to generate personalized suggestions
+- [x] Store generated suggestions in Firestore
+- [x] Display suggestions to user after mood entry
+- [x] Implement fallback static tips for each mood category
+- [x] Handle cases when AI is unavailable
+- [x] Add option to save favorite suggestions to Firestore
 
 ---
 

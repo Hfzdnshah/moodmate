@@ -8,6 +8,7 @@ import 'screens/auth/register_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/home/home_screen.dart';
 import 'screens/mood/mood_entry_screen.dart';
+import 'screens/mood/mood_entry_detail_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -72,6 +73,15 @@ class MyApp extends StatelessWidget {
           '/login': (context) => const LoginScreen(),
           '/home': (context) => const HomeScreen(),
           '/mood-entry': (context) => const MoodEntryScreen(),
+        },
+        onGenerateRoute: (settings) {
+          if (settings.name == '/mood-detail') {
+            final entryId = settings.arguments as String;
+            return MaterialPageRoute(
+              builder: (context) => MoodEntryDetailScreen(entryId: entryId),
+            );
+          }
+          return null;
         },
       ),
     );
