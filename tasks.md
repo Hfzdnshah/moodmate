@@ -64,20 +64,20 @@ This document breaks down the use cases into actionable development tasks, organ
 
 ## 2. Mood Tracking & Journaling
 
-### Task 2.1: Daily Mood Entry (UC-03)
+### Task 2.1: Daily Mood Entry (UC-03) ✅
 
 **Priority:** High  
 **Dependencies:** Task 1.2
 
-- [ ] Design mood entry UI with text input
-- [ ] Create "New Entry" button/navigation
-- [ ] Define mood entry document structure in Firestore (user_id, date, text, timestamp)
-- [ ] Create Firestore collection for mood entries
-- [ ] Add validation for empty input
-- [ ] Ensure one entry per day constraint (or allow multiple)
-- [ ] Store entry in Firestore
+- [x] Design mood entry UI with text input
+- [x] Create "New Entry" button/navigation
+- [x] Define mood entry document structure in Firestore (user_id, date, text, timestamp)
+- [x] Create Firestore collection for mood entries
+- [x] Add validation for empty input
+- [x] Ensure one entry per day constraint (or allow multiple)
+- [x] Store entry in Firestore
 - [ ] Trigger Cloud Function for AI analysis upon submission
-- [ ] Show submission confirmation to user
+- [x] Show submission confirmation to user
 
 ### Task 2.2: AI Mood Analysis Integration (UC-04)
 

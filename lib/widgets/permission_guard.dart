@@ -19,9 +19,9 @@ class PermissionGuard extends StatelessWidget {
     this.fallback,
     this.message,
   }) : assert(
-          requiredRole != null || allowedRoles != null,
-          'Either requiredRole or allowedRoles must be provided',
-        );
+         requiredRole != null || allowedRoles != null,
+         'Either requiredRole or allowedRoles must be provided',
+       );
 
   @override
   Widget build(BuildContext context) {
@@ -58,32 +58,24 @@ class PermissionGuard extends StatelessWidget {
 
   Widget _buildAccessDenied(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Access Denied'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Access Denied'), centerTitle: true),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.lock,
-                size: 80,
-                color: Colors.red,
-              ),
+              const Icon(Icons.lock, size: 80, color: Colors.red),
               const SizedBox(height: 24),
               Text(
                 'Access Denied',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 16),
               Text(
-                message ??
-                    'You do not have permission to access this feature.',
+                message ?? 'You do not have permission to access this feature.',
                 style: Theme.of(context).textTheme.bodyLarge,
                 textAlign: TextAlign.center,
               ),

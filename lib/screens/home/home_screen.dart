@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../models/user_model.dart';
+import '../mood/mood_entry_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -179,8 +180,8 @@ class HomeScreen extends StatelessWidget {
           subtitle: 'Track your mood today',
           color: Colors.deepPurple,
           onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Mood tracking coming in Task 2.1')),
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const MoodEntryScreen()),
             );
           },
         ),

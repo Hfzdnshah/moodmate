@@ -18,12 +18,14 @@ The application supports three user roles:
 
 **Read**: Any authenticated user can read any user profile (needed for counsellor matching)
 
-**Create**: 
+**Create**:
+
 - Users can only create their own profile
 - Must include: `name`, `email`, `role`, `createdAt`, `updatedAt`
 - Role must be one of: `user`, `counsellor`, `admin`
 
 **Update**:
+
 - Users can only update their own profile
 - Cannot change their role
 
@@ -32,24 +34,29 @@ The application supports three user roles:
 ### 2. Mood Entries Collection (`/mood_entries/{entryId}`)
 
 **Read**:
+
 - Users can read their own mood entries
 - Counsellors can read entries from their assigned clients
 
 **Create**:
+
 - Users can only create mood entries for themselves
 - Must include: `userId`, `text`, `timestamp`
 
 **Update**:
+
 - Users can update their own entries
 - Only within 24 hours of creation
 
 **Delete**:
+
 - Users can delete their own entries
 - Admins can delete any entry
 
 ### 3. Counsellor Assignments (`/counsellor_assignments/{userId}`)
 
 **Read**:
+
 - Users can read their own assignment
 - Counsellors can read assignments they're part of
 
@@ -64,6 +71,7 @@ The application supports three user roles:
 **Read**: Users can read messages where they are sender or recipient
 
 **Create**:
+
 - Users can message their assigned counsellor
 - Counsellors can message their assigned clients
 
@@ -173,6 +181,7 @@ If you currently have Firestore in test mode:
 **Issue**: "Missing or insufficient permissions" error
 
 **Solution**: Check that:
+
 - User is authenticated
 - User has the correct role
 - Resource path matches the rules
