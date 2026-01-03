@@ -307,9 +307,8 @@ class _SupportRequestsScreenState extends State<SupportRequestsScreen> {
                   onPressed: () async {
                     try {
                       // Get conversation thread details
-                      final threadDetails = await _messageService.getConversationThread(
-                        request.conversationThreadId!,
-                      );
+                      final threadDetails = await _messageService
+                          .getConversationThread(request.conversationThreadId!);
 
                       if (threadDetails == null) {
                         if (mounted) {
@@ -324,8 +323,10 @@ class _SupportRequestsScreenState extends State<SupportRequestsScreen> {
                       }
 
                       // Determine other user
-                      final currentUserId = FirebaseAuth.instance.currentUser?.uid;
-                      final otherUserId = threadDetails['userId'] == currentUserId
+                      final currentUserId =
+                          FirebaseAuth.instance.currentUser?.uid;
+                      final otherUserId =
+                          threadDetails['userId'] == currentUserId
                           ? threadDetails['counsellorId']
                           : threadDetails['userId'];
 
@@ -335,7 +336,8 @@ class _SupportRequestsScreenState extends State<SupportRequestsScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => ConversationScreen(
-                              conversationThreadId: request.conversationThreadId!,
+                              conversationThreadId:
+                                  request.conversationThreadId!,
                               otherUserId: otherUserId,
                               otherUserName: 'Chat',
                             ),

@@ -159,9 +159,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
       body: Column(
         children: [
           // Messages list
-          Expanded(
-            child: _buildMessagesList(),
-          ),
+          Expanded(child: _buildMessagesList()),
           // Message input
           _buildMessageInput(),
         ],
@@ -171,9 +169,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   Widget _buildMessagesList() {
     if (_isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (_errorMessage != null) {
@@ -219,7 +215,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
       itemBuilder: (context, index) {
         final message = _messages[index];
         final isMe = message.senderId == _currentUserId;
-        final showDate = index == 0 ||
+        final showDate =
+            index == 0 ||
             !_isSameDay(message.timestamp, _messages[index - 1].timestamp);
 
         return Column(
@@ -242,9 +239,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
               _formatDate(date),
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[600],
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
             ),
           ),
           const Expanded(child: Divider()),
@@ -262,15 +259,14 @@ class _ConversationScreenState extends State<ConversationScreen> {
           maxWidth: MediaQuery.of(context).size.width * 0.7,
         ),
         child: Column(
-          crossAxisAlignment:
-              isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          crossAxisAlignment: isMe
+              ? CrossAxisAlignment.end
+              : CrossAxisAlignment.start,
           children: [
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               decoration: BoxDecoration(
-                color: isMe
-                    ? Theme.of(context).primaryColor
-                    : Colors.grey[300],
+                color: isMe ? Theme.of(context).primaryColor : Colors.grey[300],
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(16),
                   topRight: const Radius.circular(16),
@@ -293,9 +289,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
                 Text(
                   _formatTime(message.timestamp),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[600],
-                        fontSize: 11,
-                      ),
+                    color: Colors.grey[600],
+                    fontSize: 11,
+                  ),
                 ),
                 if (isMe) ...[
                   const SizedBox(width: 4),
@@ -361,7 +357,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
                         height: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
                         ),
                       )
                     : const Icon(Icons.send, color: Colors.white),

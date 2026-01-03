@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user_model.dart';
+import 'counsellor_service.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -48,6 +49,22 @@ class AuthService {
           .collection('users')
           .doc(user.uid)
           .set(userModel.toFirestore());
+
+      // If user is a counsellor, create counsellor profile
+      if (role == UserRole.counsellor) {
+        try {
+          final counsellorService = CounsellorService();
+          await counsellorService.createCounsellorProfile(
+            userId: user.uid,
+            name: name,
+            email: email,
+          );
+        } catch (e) {
+          // Log error but don't fail registration
+          // Admin can manually create counsellor profile later
+          print('Warning: Failed to create counsellor profile: $e');
+        }
+      }
 
       return userModel;
     } on FirebaseAuthException catch (e) {

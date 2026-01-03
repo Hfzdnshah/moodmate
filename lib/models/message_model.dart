@@ -47,8 +47,9 @@ class MessageModel {
       content: data['content'] ?? '',
       timestamp: (data['timestamp'] as Timestamp).toDate(),
       isRead: data['isRead'] ?? false,
-      readAt:
-          data['readAt'] != null ? (data['readAt'] as Timestamp).toDate() : null,
+      readAt: data['readAt'] != null
+          ? (data['readAt'] as Timestamp).toDate()
+          : null,
     );
   }
 

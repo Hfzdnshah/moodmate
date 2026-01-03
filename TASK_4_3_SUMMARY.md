@@ -1,6 +1,7 @@
 # Task 4.3 Implementation Summary
 
 ## Overview
+
 Task 4.3 "Counsellor Provides Advice (UC-09)" has been successfully implemented. This feature enables real-time messaging between users and their assigned counsellors through an intuitive chat interface with comprehensive features.
 
 ## Components Implemented
@@ -8,7 +9,9 @@ Task 4.3 "Counsellor Provides Advice (UC-09)" has been successfully implemented.
 ### 1. Data Model
 
 #### MessageModel (`lib/models/message_model.dart`)
+
 Complete message data structure with:
+
 - `id`, `conversationThreadId`
 - `senderId`, `receiverId`
 - `content`
@@ -18,7 +21,9 @@ Complete message data structure with:
 ### 2. Services
 
 #### MessageService (`lib/services/message_service.dart`)
+
 Comprehensive messaging functionality:
+
 - `sendMessage()` - Send new messages and update conversation thread
 - `getMessages()` - Fetch all messages for a conversation
 - `streamMessages()` - Real-time message updates with Firestore snapshots
@@ -32,9 +37,11 @@ Comprehensive messaging functionality:
 ### 3. User Interface
 
 #### ConversationScreen (`lib/screens/counsellor/conversation_screen.dart`)
+
 Full-featured chat interface with:
 
 **Core Features:**
+
 - Real-time message streaming with Firestore snapshots
 - Auto-scrolling to latest messages
 - Automatic read receipts
@@ -42,6 +49,7 @@ Full-featured chat interface with:
 - Pull-to-refresh message history
 
 **UI Components:**
+
 - Clean message bubbles (sent vs received styling)
 - Date dividers (Today, Yesterday, or formatted date)
 - Timestamp display for each message
@@ -52,6 +60,7 @@ Full-featured chat interface with:
 - Empty state for no messages
 
 **Message Display:**
+
 - Different colors for sent (primary color) vs received (grey) messages
 - Message bubbles aligned to right (sent) or left (received)
 - Rounded corners with asymmetric radius for chat bubble effect
@@ -59,6 +68,7 @@ Full-featured chat interface with:
 - Multi-line message support
 
 **User Experience:**
+
 - Smooth animations when scrolling to new messages
 - Loading indicator while sending
 - Message restoration on send failure
@@ -68,7 +78,9 @@ Full-featured chat interface with:
 ### 4. Cloud Functions
 
 #### notifyOnNewMessage (`functions/src/index.ts`)
+
 Firebase Cloud Function triggered on new message:
+
 - Listens to `conversation_threads/{threadId}/messages/{messageId}` onCreate
 - Fetches receiver's FCM token from users collection
 - Gets sender's name for personalized notification
@@ -83,7 +95,9 @@ Firebase Cloud Function triggered on new message:
 ### 5. Integration
 
 #### Updated Support Requests Screen
+
 Enhanced `support_requests_screen.dart` with:
+
 - Added `MessageService` import and initialization
 - Updated "View Conversation" button to actually navigate
 - Fetches conversation thread details
@@ -92,6 +106,7 @@ Enhanced `support_requests_screen.dart` with:
 - Shows appropriate error messages
 
 **Navigation Flow:**
+
 1. User views support request
 2. Clicks "View Conversation" button
 3. System fetches conversation thread details
@@ -102,6 +117,7 @@ Enhanced `support_requests_screen.dart` with:
 ### 6. Security & Privacy
 
 **Firestore Security Rules (Already Configured):**
+
 - Messages subcollection within conversation_threads
 - Read: Only participants (user & counsellor) and admins
 - Create: Only participants, must be sender
@@ -109,6 +125,7 @@ Enhanced `support_requests_screen.dart` with:
 - Delete: Admin only
 
 **Access Control:**
+
 - Verified participant relationship before message display
 - Server-side validation through Firestore rules
 - Read receipts only visible to sender
@@ -117,24 +134,28 @@ Enhanced `support_requests_screen.dart` with:
 ## Features Implemented
 
 ### Real-Time Messaging
+
 ✅ Instant message delivery with Firestore snapshots
 ✅ Live message updates without page refresh
 ✅ Auto-scroll to latest messages
 ✅ Connection status handling
 
 ### Read Receipts
+
 ✅ Automatic read tracking when viewing conversation
 ✅ Visual indicators (single check = delivered, double check = read)
 ✅ Blue color for read messages
 ✅ Bulk mark as read functionality
 
 ### Notifications
+
 ✅ Push notifications via FCM when new message received
 ✅ Personalized sender name in notification
 ✅ Message preview in notification body
 ✅ Deep linking data for navigation
 
 ### User Experience
+
 ✅ Clean, modern chat UI
 ✅ Message bubbles with proper styling
 ✅ Date dividers for better context
@@ -144,6 +165,7 @@ Enhanced `support_requests_screen.dart` with:
 ✅ Message restoration on send failure
 
 ### Offline Support
+
 ✅ Firestore offline persistence (built-in)
 ✅ Automatic retry (Firestore client handles this)
 ✅ Queue messages when offline (Firestore automatic)
@@ -151,18 +173,21 @@ Enhanced `support_requests_screen.dart` with:
 ## Technical Implementation
 
 ### Real-Time Updates
+
 - Uses Firestore `snapshots()` for live data
 - StreamSubscription management with proper disposal
 - Auto-scrolling with post-frame callbacks
 - Efficient list updates with setState
 
 ### Message Storage
+
 - Messages stored in subcollection: `conversation_threads/{id}/messages`
 - Ordered by timestamp ascending (chronological)
 - Automatic lastMessageAt update on conversation thread
 - Efficient querying with Firestore indexes
 
 ### Read Status
+
 - Marks messages as read when conversation is viewed
 - Updates isRead and readAt fields
 - Batch updates for efficiency
@@ -171,7 +196,9 @@ Enhanced `support_requests_screen.dart` with:
 ## Database Structure
 
 ### Messages Subcollection
+
 Path: `conversation_threads/{threadId}/messages/{messageId}`
+
 ```
 {
   conversationThreadId: string,
@@ -185,12 +212,14 @@ Path: `conversation_threads/{threadId}/messages/{messageId}`
 ```
 
 ### Conversation Thread Updates
+
 - `lastMessageAt` updated on each new message
 - Enables sorting conversations by recent activity
 
 ## User Flow
 
 ### For Users:
+
 1. Submit support request to counsellor
 2. Counsellor accepts request (creates conversation thread)
 3. User views "My Support Requests"
@@ -201,6 +230,7 @@ Path: `conversation_threads/{threadId}/messages/{messageId}`
 8. See read receipts on sent messages
 
 ### For Counsellors:
+
 1. Accept support request from client
 2. View "My Clients" or "Support Requests"
 3. Click "View Conversation" on request with thread
@@ -241,6 +271,7 @@ Path: `conversation_threads/{threadId}/messages/{messageId}`
 ## Dependencies
 
 All required dependencies already present:
+
 - `cloud_firestore` - Real-time database
 - `firebase_auth` - Authentication
 - `firebase_messaging` - Push notifications (in Cloud Functions)
@@ -248,6 +279,7 @@ All required dependencies already present:
 ## Testing Considerations
 
 To test this feature:
+
 1. Create support request and have counsellor accept it
 2. Verify conversation thread is created
 3. Test real-time messaging from both sides

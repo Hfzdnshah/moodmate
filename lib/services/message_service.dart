@@ -32,9 +32,7 @@ class MessageService {
       await _firestore
           .collection('conversation_threads')
           .doc(conversationThreadId)
-          .update({
-        'lastMessageAt': Timestamp.now(),
-      });
+          .update({'lastMessageAt': Timestamp.now()});
 
       return docRef.id;
     } catch (e) {
@@ -69,8 +67,9 @@ class MessageService {
         .orderBy('timestamp', descending: false)
         .snapshots()
         .map(
-          (snapshot) =>
-              snapshot.docs.map((doc) => MessageModel.fromFirestore(doc)).toList(),
+          (snapshot) => snapshot.docs
+              .map((doc) => MessageModel.fromFirestore(doc))
+              .toList(),
         );
   }
 
@@ -85,10 +84,7 @@ class MessageService {
           .doc(conversationThreadId)
           .collection('messages')
           .doc(messageId)
-          .update({
-        'isRead': true,
-        'readAt': Timestamp.now(),
-      });
+          .update({'isRead': true, 'readAt': Timestamp.now()});
     } catch (e) {
       throw Exception('Failed to mark message as read: $e');
     }
@@ -153,9 +149,7 @@ class MessageService {
           .doc(conversationThreadId)
           .collection('messages')
           .doc(messageId)
-          .update({
-        'content': '[Message deleted]',
-      });
+          .update({'content': '[Message deleted]'});
     } catch (e) {
       throw Exception('Failed to delete message: $e');
     }
