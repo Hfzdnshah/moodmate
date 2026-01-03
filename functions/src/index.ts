@@ -712,3 +712,85 @@ export const notifyUserOnRequestAccepted = functions.firestore
 			functions.logger.error("Error sending user notification:", error);
 		}
 	});
+
+// =====================================================
+// Message Notifications
+// =====================================================
+
+/**
+ * Send notification when a new message is sent in a conversation
+ */
+export const notifyOnNewMessage = functions.firestore
+	.document("conversation_threads/{threadId}/messages/{messageId}")
+	.onCreate(async (snapshot, context) => {
+		try {
+			const message = snapshot.data();
+			const threadId = context.params.threadId;
+
+			functions.logger.info(`New message in thread ${threadId}`, message);
+
+			// Get receiver's FCM token
+			const receiverDoc = await admin
+				.firestore()
+				.collection("users")
+				.doc(message.receiverId)
+				.get();
+
+			if (!receiverDoc.exists) {
+				functions.logger.warn(`Receiver ${message.receiverId} not found`);
+				return;
+			}
+
+			const receiverData = receiverDoc.data();
+			const fcmToken = receiverData?.fcmToken;
+
+			if (!fcmToken) {
+				functions.logger.warn(
+					`No FCM token for receiver ${message.receiverId}`
+				);
+				return;
+			}
+
+			// Get sender's name
+			const senderDoc = await admin
+				.firestore()
+				.collection("users")
+				.doc(message.senderId)
+				.get();
+			const senderName = senderDoc.exists
+				? senderDoc.data()?.name || "Someone"
+				: "Someone";
+
+			// Send notification
+			const notificationMessage = {
+				token: fcmToken,
+				notification: {
+					title: `New message from ${senderName}`,
+					body: message.content.substring(0, 100),
+				},
+				data: {
+					type: "new_message",
+					threadId: threadId,
+					senderId: message.senderId,
+				},
+				android: {
+					priority: "high" as const,
+				},
+				apns: {
+					payload: {
+						aps: {
+							sound: "default",
+							badge: 1,
+						},
+					},
+				},
+			};
+
+			await admin.messaging().send(notificationMessage);
+			functions.logger.info(
+				`Message notification sent to ${message.receiverId}`
+			);
+		} catch (error) {
+			functions.logger.error("Error sending message notification:", error);
+		}
+	});

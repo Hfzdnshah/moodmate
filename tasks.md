@@ -175,20 +175,20 @@ This document breaks down the use cases into actionable development tasks, organ
 - [x] Handle "access denied" for unauthorized requests
 - [x] Add filtering and date range options with Firestore queries
 
-### Task 4.3: Counsellor Provides Advice (UC-09)
+### Task 4.3: Counsellor Provides Advice (UC-09) ✅
 
 **Priority:** Medium  
 **Dependencies:** Task 4.1
 
-- [ ] Design chat/advice UI for counsellors
-- [ ] Define message document structure in Firestore (sender_id, receiver_id, content, timestamp)
-- [ ] Create messages subcollection in conversation thread
-- [ ] Implement real-time messaging using Firestore snapshots
-- [ ] Store messages in Firestore conversation thread
-- [ ] Send push notifications using Firebase Cloud Messaging when advice is received
-- [ ] Handle offline mode with Firebase offline persistence
-- [ ] Implement automatic retry with Firestore client
-- [ ] Add message read status tracking in Firestore
+- [x] Design chat/advice UI for counsellors
+- [x] Define message document structure in Firestore (sender_id, receiver_id, content, timestamp)
+- [x] Create messages subcollection in conversation thread
+- [x] Implement real-time messaging using Firestore snapshots
+- [x] Store messages in Firestore conversation thread
+- [x] Send push notifications using Firebase Cloud Messaging when advice is received
+- [x] Handle offline mode with Firebase offline persistence
+- [x] Implement automatic retry with Firestore client
+- [x] Add message read status tracking in Firestore
 
 ---
 

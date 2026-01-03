@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../models/support_request_model.dart';
 import '../../services/support_request_service.dart';
+import '../../services/message_service.dart';
+import 'conversation_screen.dart';
 import 'dart:async';
 
 class SupportRequestsScreen extends StatefulWidget {
@@ -13,6 +15,7 @@ class SupportRequestsScreen extends StatefulWidget {
 
 class _SupportRequestsScreenState extends State<SupportRequestsScreen> {
   final SupportRequestService _supportRequestService = SupportRequestService();
+  final MessageService _messageService = MessageService();
   StreamSubscription<List<SupportRequestModel>>? _requestsSubscription;
   List<SupportRequestModel> _requests = [];
   bool _isLoading = true;
@@ -301,13 +304,54 @@ class _SupportRequestsScreenState extends State<SupportRequestsScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  onPressed: () {
-                    // TODO: Navigate to conversation thread
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Conversation feature coming soon!'),
-                      ),
-                    );
+                  onPressed: () async {
+                    try {
+                      // Get conversation thread details
+                      final threadDetails = await _messageService.getConversationThread(
+                        request.conversationThreadId!,
+                      );
+
+                      if (threadDetails == null) {
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Conversation thread not found'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                        return;
+                      }
+
+                      // Determine other user
+                      final currentUserId = FirebaseAuth.instance.currentUser?.uid;
+                      final otherUserId = threadDetails['userId'] == currentUserId
+                          ? threadDetails['counsellorId']
+                          : threadDetails['userId'];
+
+                      // Navigate to conversation
+                      if (mounted) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ConversationScreen(
+                              conversationThreadId: request.conversationThreadId!,
+                              otherUserId: otherUserId,
+                              otherUserName: 'Chat',
+                            ),
+                          ),
+                        );
+                      }
+                    } catch (e) {
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Error: ${e.toString()}'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    }
                   },
                   icon: const Icon(Icons.chat),
                   label: const Text('View Conversation'),
