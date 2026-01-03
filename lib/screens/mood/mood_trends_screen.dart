@@ -31,7 +31,10 @@ class _MoodTrendsScreenState extends State<MoodTrendsScreen> {
             itemBuilder: (context) => [
               const PopupMenuItem(value: 'line', child: Text('Line Chart')),
               const PopupMenuItem(value: 'bar', child: Text('Bar Chart')),
-              const PopupMenuItem(value: 'calendar', child: Text('Calendar View')),
+              const PopupMenuItem(
+                value: 'calendar',
+                child: Text('Calendar View'),
+              ),
             ],
           ),
         ],
@@ -39,9 +42,7 @@ class _MoodTrendsScreenState extends State<MoodTrendsScreen> {
       body: Column(
         children: [
           _buildTimeRangeSelector(),
-          Expanded(
-            child: _buildChart(),
-          ),
+          Expanded(child: _buildChart()),
           _buildEmotionLegend(),
         ],
       ),
@@ -87,7 +88,6 @@ class _MoodTrendsScreenState extends State<MoodTrendsScreen> {
       stream: _firestore
           .collection('mood_entries')
           .where('userId', isEqualTo: user.uid)
-          .orderBy('timestamp', descending: false)
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
@@ -99,12 +99,17 @@ class _MoodTrendsScreenState extends State<MoodTrendsScreen> {
         }
 
         final docs = snapshot.data?.docs ?? [];
-        
-        // Filter by date range on client side
-        final filteredDocs = docs.where((doc) {
-          final timestamp = doc.data()['timestamp'] as Timestamp?;
-          return timestamp != null && timestamp.toDate().isAfter(startDate);
-        }).toList();
+
+        // Filter by date range and sort on client side
+        final filteredDocs =
+            docs.where((doc) {
+              final timestamp = doc.data()['timestamp'] as Timestamp?;
+              return timestamp != null && timestamp.toDate().isAfter(startDate);
+            }).toList()..sort((a, b) {
+              final aTime = (a.data()['timestamp'] as Timestamp).toDate();
+              final bTime = (b.data()['timestamp'] as Timestamp).toDate();
+              return aTime.compareTo(bTime);
+            });
 
         if (filteredDocs.isEmpty) {
           return Center(
@@ -114,7 +119,9 @@ class _MoodTrendsScreenState extends State<MoodTrendsScreen> {
                 Icon(
                   Icons.insert_chart_outlined,
                   size: 64,
-                  color: Theme.of(context).colorScheme.secondary.withOpacity(0.5),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.secondary.withOpacity(0.5),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -131,7 +138,9 @@ class _MoodTrendsScreenState extends State<MoodTrendsScreen> {
           );
         }
 
-        final entries = filteredDocs.map((doc) => MoodEntry.fromFirestore(doc)).toList();
+        final entries = filteredDocs
+            .map((doc) => MoodEntry.fromFirestore(doc))
+            .toList();
 
         switch (_chartType) {
           case 'bar':
@@ -199,7 +208,14 @@ class _MoodTrendsScreenState extends State<MoodTrendsScreen> {
                 showTitles: true,
                 reservedSize: 40,
                 getTitlesWidget: (value, meta) {
-                  const emotions = ['Fear', 'Sad', 'Anxious', 'Neutral', 'Content', 'Joy'];
+                  const emotions = [
+                    'Fear',
+                    'Sad',
+                    'Anxious',
+                    'Neutral',
+                    'Content',
+                    'Joy',
+                  ];
                   final index = value.toInt() - 1;
                   if (index >= 0 && index < emotions.length) {
                     return Text(
@@ -227,8 +243,12 @@ class _MoodTrendsScreenState extends State<MoodTrendsScreen> {
                 },
               ),
             ),
-            topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            topTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            rightTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
           ),
           borderData: FlBorderData(show: true),
           minY: 0,
@@ -340,7 +360,10 @@ class _MoodTrendsScreenState extends State<MoodTrendsScreen> {
                     return Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Text(
-                        emotion.substring(0, emotion.length > 5 ? 5 : emotion.length),
+                        emotion.substring(
+                          0,
+                          emotion.length > 5 ? 5 : emotion.length,
+                        ),
                         style: const TextStyle(fontSize: 10),
                       ),
                     );
@@ -349,8 +372,12 @@ class _MoodTrendsScreenState extends State<MoodTrendsScreen> {
                 },
               ),
             ),
-            topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            topTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            rightTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
           ),
           borderData: FlBorderData(show: false),
           barGroups: List.generate(topEmotions.length, (index) {
@@ -436,13 +463,13 @@ class _MoodTrendsScreenState extends State<MoodTrendsScreen> {
               children: [
                 Text(
                   DateFormat('d').format(date),
-                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 if (emoji.isNotEmpty)
-                  Text(
-                    emoji,
-                    style: const TextStyle(fontSize: 16),
-                  ),
+                  Text(emoji, style: const TextStyle(fontSize: 16)),
               ],
             ),
           );
@@ -461,10 +488,7 @@ class _MoodTrendsScreenState extends State<MoodTrendsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Emotion Legend',
-            style: Theme.of(context).textTheme.titleSmall,
-          ),
+          Text('Emotion Legend', style: Theme.of(context).textTheme.titleSmall),
           const SizedBox(height: 8),
           Wrap(
             spacing: 8,
@@ -490,10 +514,7 @@ class _MoodTrendsScreenState extends State<MoodTrendsScreen> {
         Container(
           width: 12,
           height: 12,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         const SizedBox(width: 4),
         Text(label, style: const TextStyle(fontSize: 11)),

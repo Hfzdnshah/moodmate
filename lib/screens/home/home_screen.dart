@@ -198,7 +198,9 @@ class HomeScreen extends StatelessWidget {
           color: Colors.blue,
           onTap: () {
             Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const MoodHistoryScreen()),
+              MaterialPageRoute(
+                builder: (context) => const MoodHistoryScreen(),
+              ),
             );
           },
         ),

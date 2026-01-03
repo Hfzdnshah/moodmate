@@ -48,9 +48,7 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
       body: Column(
         children: [
           if (_filterOption != 'all') _buildFilterChip(),
-          Expanded(
-            child: _buildMoodList(),
-          ),
+          Expanded(child: _buildMoodList()),
         ],
       ),
     );
@@ -94,7 +92,9 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
   Widget _buildMoodList() {
     final user = _auth.currentUser;
     if (user == null) {
-      return const Center(child: Text('Please log in to view your mood history'));
+      return const Center(
+        child: Text('Please log in to view your mood history'),
+      );
     }
 
     Query<Map<String, dynamic>> query = _firestore
@@ -149,8 +149,12 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
             final timestamp = doc.data()['timestamp'] as Timestamp?;
             if (timestamp == null) return false;
             final date = timestamp.toDate();
-            return date.isAfter(_selectedDateRange!.start.subtract(const Duration(days: 1))) &&
-                date.isBefore(_selectedDateRange!.end.add(const Duration(days: 1)));
+            return date.isAfter(
+                  _selectedDateRange!.start.subtract(const Duration(days: 1)),
+                ) &&
+                date.isBefore(
+                  _selectedDateRange!.end.add(const Duration(days: 1)),
+                );
           }).toList();
         }
 
@@ -173,11 +177,15 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
                 Icon(
                   Icons.mood_outlined,
                   size: 64,
-                  color: Theme.of(context).colorScheme.secondary.withOpacity(0.5),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.secondary.withOpacity(0.5),
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  _searchQuery.isEmpty ? 'No mood entries yet' : 'No entries found',
+                  _searchQuery.isEmpty
+                      ? 'No mood entries yet'
+                      : 'No entries found',
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(height: 8),
@@ -196,7 +204,8 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
           onNotification: (ScrollNotification scrollInfo) {
             if (!_isLoadingMore &&
                 _hasMore &&
-                scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+                scrollInfo.metrics.pixels ==
+                    scrollInfo.metrics.maxScrollExtent) {
               _loadMoreEntries();
             }
             return false;
@@ -286,7 +295,10 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
                   ),
                   if (entry.confidenceScore != null)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.grey.shade200,
                         borderRadius: BorderRadius.circular(12),
@@ -308,12 +320,17 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
-              if (entry.recommendations != null && entry.recommendations!.isNotEmpty)
+              if (entry.recommendations != null &&
+                  entry.recommendations!.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
                   child: Row(
                     children: [
-                      Icon(Icons.lightbulb_outline, size: 16, color: Colors.amber.shade700),
+                      Icon(
+                        Icons.lightbulb_outline,
+                        size: 16,
+                        color: Colors.amber.shade700,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         '${entry.recommendations!.length} recommendations',
