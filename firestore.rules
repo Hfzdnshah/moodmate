@@ -63,6 +63,7 @@ service cloud.firestore {
                     && request.resource.data.keys().hasAll(['userId', 'text', 'timestamp']);
       
       // Users can update their own entries within 24 hours of creation
+      // Cloud Functions can also update entries (for AI analysis results)
       allow update: if isOwner(resource.data.userId)
                     && request.time < resource.data.timestamp + duration.value(24, 'h');
       
