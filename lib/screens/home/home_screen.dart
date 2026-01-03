@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../models/user_model.dart';
 import '../mood/mood_entry_screen.dart';
+import '../mood/mood_history_screen.dart';
+import '../mood/mood_trends_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -195,8 +197,23 @@ class HomeScreen extends StatelessWidget {
           subtitle: 'View your past entries',
           color: Colors.blue,
           onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Mood history coming soon')),
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const MoodHistoryScreen()),
+            );
+          },
+        ),
+        const SizedBox(height: 12),
+
+        // Trends card
+        _buildFeatureCard(
+          context,
+          icon: Icons.show_chart,
+          title: 'Mood Trends',
+          subtitle: 'Visualize your mood patterns',
+          color: Colors.teal,
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const MoodTrendsScreen()),
             );
           },
         ),

@@ -115,30 +115,30 @@ This document breaks down the use cases into actionable development tasks, organ
 
 ## 3. Mood History & Visualization
 
-### Task 3.1: View Mood History (UC-06)
+### Task 3.1: View Mood History (UC-06) ✅
 
 **Priority:** Medium  
 **Dependencies:** Task 2.1
 
-- [ ] Design mood history/trends UI
-- [ ] Query Firestore to fetch user's mood logs
-- [ ] Implement date range filtering using Firestore queries (week, month, custom)
-- [ ] Display mood entries in a list or timeline view
-- [ ] Implement pagination using Firestore query cursors
-- [ ] Handle empty state (no data message)
-- [ ] Add search/filter functionality with Firestore queries
+- [x] Design mood history/trends UI
+- [x] Query Firestore to fetch user's mood logs
+- [x] Implement date range filtering using Firestore queries (week, month, custom)
+- [x] Display mood entries in a list or timeline view
+- [x] Implement pagination using Firestore query cursors
+- [x] Handle empty state (no data message)
+- [x] Add search/filter functionality with Firestore queries
 
-### Task 3.2: Mood Trend Visualization
+### Task 3.2: Mood Trend Visualization ✅
 
 **Priority:** Medium  
 **Dependencies:** Task 3.1, Task 2.2
 
-- [ ] Choose charting library (e.g., charts_flutter, fl_chart)
-- [ ] Design chart types (line chart, bar chart, mood calendar)
-- [ ] Aggregate mood data by time period
-- [ ] Generate visualizations for mood trends
-- [ ] Implement interactive chart features
-- [ ] Add export/share functionality for reports
+- [x] Choose charting library (e.g., charts_flutter, fl_chart)
+- [x] Design chart types (line chart, bar chart, mood calendar)
+- [x] Aggregate mood data by time period
+- [x] Generate visualizations for mood trends
+- [x] Implement interactive chart features
+- [x] Add export/share functionality for reports
 
 ---
 
