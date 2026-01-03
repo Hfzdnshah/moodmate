@@ -11,7 +11,7 @@ class HomeScreen extends StatelessWidget {
     return Consumer<AuthProvider>(
       builder: (context, authProvider, child) {
         final user = authProvider.userModel;
-        
+
         return Scaffold(
           appBar: AppBar(
             title: const Text('MoodMate'),
@@ -165,12 +165,12 @@ class HomeScreen extends StatelessWidget {
       children: [
         Text(
           'Your Dashboard',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
-        
+
         // Mood tracking card
         _buildFeatureCard(
           context,
@@ -180,14 +180,12 @@ class HomeScreen extends StatelessWidget {
           color: Colors.deepPurple,
           onTap: () {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Mood tracking coming in Task 2.1'),
-              ),
+              const SnackBar(content: Text('Mood tracking coming in Task 2.1')),
             );
           },
         ),
         const SizedBox(height: 12),
-        
+
         // History card
         _buildFeatureCard(
           context,
@@ -197,14 +195,12 @@ class HomeScreen extends StatelessWidget {
           color: Colors.blue,
           onTap: () {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Mood history coming soon'),
-              ),
+              const SnackBar(content: Text('Mood history coming soon')),
             );
           },
         ),
         const SizedBox(height: 12),
-        
+
         // Counsellor card
         _buildFeatureCard(
           context,
@@ -214,9 +210,7 @@ class HomeScreen extends StatelessWidget {
           color: Colors.green,
           onTap: () {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Counsellor matching coming soon'),
-              ),
+              const SnackBar(content: Text('Counsellor matching coming soon')),
             );
           },
         ),
@@ -230,12 +224,12 @@ class HomeScreen extends StatelessWidget {
       children: [
         Text(
           'Counsellor Dashboard',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
-        
+
         // My clients card
         _buildFeatureCard(
           context,
@@ -245,14 +239,12 @@ class HomeScreen extends StatelessWidget {
           color: Colors.green,
           onTap: () {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Client management coming soon'),
-              ),
+              const SnackBar(content: Text('Client management coming soon')),
             );
           },
         ),
         const SizedBox(height: 12),
-        
+
         // Messages card
         _buildFeatureCard(
           context,
@@ -262,9 +254,7 @@ class HomeScreen extends StatelessWidget {
           color: Colors.blue,
           onTap: () {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Messaging coming soon'),
-              ),
+              const SnackBar(content: Text('Messaging coming soon')),
             );
           },
         ),
@@ -305,15 +295,15 @@ class HomeScreen extends StatelessWidget {
                     Text(
                       title,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       subtitle,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.grey[600],
-                          ),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
                     ),
                   ],
                 ),

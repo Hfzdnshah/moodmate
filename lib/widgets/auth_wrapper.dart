@@ -14,9 +14,7 @@ class AuthWrapper extends StatelessWidget {
         // Show loading screen while checking auth state
         if (authProvider.isLoading) {
           return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
+            body: Center(child: CircularProgressIndicator()),
           );
         }
 
@@ -26,7 +24,7 @@ class AuthWrapper extends StatelessWidget {
           if (authProvider.firebaseUser?.emailVerified == false) {
             return const EmailVerificationScreen();
           }
-          
+
           // User is authenticated and verified
           return const HomeScreen();
         }
@@ -62,34 +60,30 @@ class EmailVerificationScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.email,
-                size: 80,
-                color: Colors.deepPurple,
-              ),
+              const Icon(Icons.email, size: 80, color: Colors.deepPurple),
               const SizedBox(height: 24),
               Text(
                 'Verify Your Email',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                  fontWeight: FontWeight.bold,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
               Text(
                 'We sent a verification email to:',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey[600],
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
               Text(
                 authProvider.firebaseUser?.email ?? '',
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.deepPurple,
-                    ),
+                  fontWeight: FontWeight.bold,
+                  color: Colors.deepPurple,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),

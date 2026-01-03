@@ -5,7 +5,7 @@ import '../services/auth_service.dart';
 
 class AuthProvider extends ChangeNotifier {
   final AuthService _authService = AuthService();
-  
+
   User? _firebaseUser;
   UserModel? _userModel;
   bool _isLoading = true;
@@ -23,7 +23,7 @@ class AuthProvider extends ChangeNotifier {
     // Listen to auth state changes
     _authService.authStateChanges.listen((User? user) async {
       _firebaseUser = user;
-      
+
       if (user != null) {
         // Fetch user profile from Firestore
         try {
@@ -35,7 +35,7 @@ class AuthProvider extends ChangeNotifier {
       } else {
         _userModel = null;
       }
-      
+
       _isLoading = false;
       notifyListeners();
     });

@@ -12,10 +12,10 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _authService = AuthService();
-  
+
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  
+
   bool _isLoading = false;
   bool _obscurePassword = true;
 
@@ -46,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (user != null) {
         // Check if email is verified
         final isVerified = await _authService.isEmailVerified();
-        
+
         if (!isVerified) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -92,7 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } catch (e) {
       if (!mounted) return;
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(e.toString()),
@@ -112,10 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sign In'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Sign In'), centerTitle: true),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
@@ -126,30 +123,26 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 const SizedBox(height: 40),
                 // App logo or title
-                const Icon(
-                  Icons.mood,
-                  size: 80,
-                  color: Colors.deepPurple,
-                ),
+                const Icon(Icons.mood, size: 80, color: Colors.deepPurple),
                 const SizedBox(height: 16),
                 Text(
                   'MoodMate',
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.deepPurple,
-                      ),
+                    fontWeight: FontWeight.bold,
+                    color: Colors.deepPurple,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8),
                 Text(
                   'Welcome back!',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey[600],
-                      ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 48),
-                
+
                 // Email field
                 TextFormField(
                   controller: _emailController,
@@ -165,7 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   textInputAction: TextInputAction.next,
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Password field
                 TextFormField(
                   controller: _passwordController,
@@ -199,7 +192,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   onFieldSubmitted: (_) => _handleLogin(),
                 ),
                 const SizedBox(height: 24),
-                
+
                 // Login button
                 ElevatedButton(
                   onPressed: _isLoading ? null : _handleLogin,
@@ -218,13 +211,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             color: Colors.white,
                           ),
                         )
-                      : const Text(
-                          'Sign In',
-                          style: TextStyle(fontSize: 16),
-                        ),
+                      : const Text('Sign In', style: TextStyle(fontSize: 16)),
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Register link
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
