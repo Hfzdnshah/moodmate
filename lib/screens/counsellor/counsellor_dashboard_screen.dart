@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../models/user_model.dart';
-import '../../services/counsellor_assignment_service.dart';
+import '../../models/support_request_model.dart';
 import 'user_mood_summary_screen.dart';
 
 class CounsellorDashboardScreen extends StatefulWidget {
@@ -13,8 +14,7 @@ class CounsellorDashboardScreen extends StatefulWidget {
 }
 
 class _CounsellorDashboardScreenState extends State<CounsellorDashboardScreen> {
-  final CounsellorAssignmentService _assignmentService =
-      CounsellorAssignmentService();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   List<UserModel> _assignedUsers = [];
   bool _isLoading = true;
   String? _errorMessage;
@@ -41,12 +41,83 @@ class _CounsellorDashboardScreenState extends State<CounsellorDashboardScreen> {
     });
 
     try {
-      final users = await _assignmentService.getAssignedUsers(user.uid);
+      // Debug: Print counsellor ID
+      print('DEBUG: Loading clients for counsellor: ${user.uid}');
+
+      // First, check ALL support requests for this counsellor (any status)
+      final allRequestsSnapshot = await _firestore
+          .collection('support_requests')
+          .where('counsellorId', isEqualTo: user.uid)
+          .get();
+
+      print(
+        'DEBUG: Total support requests for this counsellor (any status): ${allRequestsSnapshot.docs.length}',
+      );
+      for (var doc in allRequestsSnapshot.docs) {
+        print(
+          'DEBUG: Request ${doc.id}: status=${doc.data()['status']}, userId=${doc.data()['userId']}',
+        );
+      }
+
+      // Now get only accepted/inProgress ones
+      final requestsSnapshot = await _firestore
+          .collection('support_requests')
+          .where('counsellorId', isEqualTo: user.uid)
+          .where(
+            'status',
+            whereIn: [
+              SupportRequestStatus.accepted.name,
+              SupportRequestStatus.inProgress.name,
+            ],
+          )
+          .get();
+
+      // Debug: Print query results
+      print(
+        'DEBUG: Found ${requestsSnapshot.docs.length} accepted/inProgress requests',
+      );
+      for (var doc in requestsSnapshot.docs) {
+        print(
+          'DEBUG: Request ${doc.id}: userId=${doc.data()['userId']}, status=${doc.data()['status']}',
+        );
+      }
+
+      // Get unique user IDs
+      final Set<String> userIds = requestsSnapshot.docs
+          .map((doc) => doc.data()['userId'] as String)
+          .toSet();
+
+      print('DEBUG: Unique user IDs: $userIds');
+
+      if (userIds.isEmpty) {
+        print('DEBUG: No users found, showing empty state');
+        setState(() {
+          _assignedUsers = [];
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // Fetch user details
+      final userDocs = await Future.wait(
+        userIds.map(
+          (userId) => _firestore.collection('users').doc(userId).get(),
+        ),
+      );
+
+      final users = userDocs
+          .where((doc) => doc.exists)
+          .map((doc) => UserModel.fromFirestore(doc))
+          .toList();
+
+      print('DEBUG: Loaded ${users.length} user details');
+
       setState(() {
         _assignedUsers = users;
         _isLoading = false;
       });
     } catch (e) {
+      print('DEBUG: Error loading assigned users: $e');
       setState(() {
         _errorMessage = e.toString();
         _isLoading = false;

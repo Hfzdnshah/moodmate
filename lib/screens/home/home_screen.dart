@@ -8,6 +8,7 @@ import '../mood/mood_trends_screen.dart';
 import '../counsellor/counsellor_list_screen.dart';
 import '../counsellor/support_requests_screen.dart';
 import '../counsellor/counsellor_dashboard_screen.dart';
+import '../counsellor/pending_requests_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -283,6 +284,23 @@ class HomeScreen extends StatelessWidget {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => const CounsellorDashboardScreen(),
+              ),
+            );
+          },
+        ),
+        const SizedBox(height: 12),
+
+        // Pending requests card
+        _buildFeatureCard(
+          context,
+          icon: Icons.pending_actions,
+          title: 'Pending Requests',
+          subtitle: 'Accept new support requests',
+          color: Colors.orange,
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const PendingRequestsScreen(),
               ),
             );
           },

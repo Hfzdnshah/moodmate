@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../models/user_model.dart';
 import '../../models/mood_entry_model.dart';
+import '../../models/support_request_model.dart';
 import '../../services/mood_entry_service.dart';
-import '../../services/counsellor_assignment_service.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 class UserMoodSummaryScreen extends StatefulWidget {
@@ -17,8 +18,7 @@ class UserMoodSummaryScreen extends StatefulWidget {
 
 class _UserMoodSummaryScreenState extends State<UserMoodSummaryScreen> {
   final MoodEntryService _moodEntryService = MoodEntryService();
-  final CounsellorAssignmentService _assignmentService =
-      CounsellorAssignmentService();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   List<MoodEntry> _moodEntries = [];
   bool _isLoading = true;
@@ -48,11 +48,22 @@ class _UserMoodSummaryScreenState extends State<UserMoodSummaryScreen> {
     });
 
     try {
-      // Check if counsellor has access to this user
-      final hasAccess = await _assignmentService.isUserAssignedToCounsellor(
-        userId: widget.user.id,
-        counsellorId: counsellor.uid,
-      );
+      // Check if counsellor has access to this user via support requests
+      final supportRequestSnapshot = await _firestore
+          .collection('support_requests')
+          .where('userId', isEqualTo: widget.user.id)
+          .where('counsellorId', isEqualTo: counsellor.uid)
+          .where(
+            'status',
+            whereIn: [
+              SupportRequestStatus.accepted.name,
+              SupportRequestStatus.inProgress.name,
+            ],
+          )
+          .limit(1)
+          .get();
+
+      final hasAccess = supportRequestSnapshot.docs.isNotEmpty;
 
       if (!hasAccess) {
         setState(() {
