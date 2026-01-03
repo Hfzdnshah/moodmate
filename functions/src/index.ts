@@ -1,20 +1,20 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
-import OpenAI from "openai";
+import Mistral from "@mistralai/mistralai";
 
 // Initialize Firebase Admin
 admin.initializeApp();
 
-// Lazy initialization of OpenAI client
-let openaiClient: OpenAI | null = null;
+// Lazy initialization of Mistral client
+let mistralClient: Mistral | null = null;
 
-function getOpenAIClient(): OpenAI {
-	if (!openaiClient) {
-		openaiClient = new OpenAI({
-			apiKey: functions.config().openai?.key || process.env.OPENAI_API_KEY,
-		});
+function getMistralClient(): Mistral {
+	if (!mistralClient) {
+		mistralClient = new Mistral(
+			functions.config().mistral?.key || process.env.MISTRAL_API_KEY
+		);
 	}
-	return openaiClient;
+	return mistralClient;
 }
 
 // Emotion categories we'll use
@@ -187,7 +187,7 @@ export const analyzeMoodEntry = functions.firestore
 	});
 
 /**
- * Analyzes mood text using OpenAI API
+ * Analyzes mood text using Mistral AI API
  */
 async function analyzeMoodWithOpenAI(
 	text: string
@@ -211,9 +211,9 @@ Respond in JSON format with:
 
 Be empathetic and consider the overall tone and context.`;
 
-		const openai = getOpenAIClient();
-		const response = await openai.chat.completions.create({
-			model: "gpt-3.5-turbo",
+		const mistral = getMistralClient();
+		const response = await mistral.chat({
+			model: "mistral-small-latest",
 			messages: [
 				{
 					role: "system",
@@ -228,13 +228,13 @@ Be empathetic and consider the overall tone and context.`;
 				},
 			],
 			temperature: 0.3,
-			max_tokens: 200,
-			response_format: { type: "json_object" },
+			maxTokens: 200,
+			responseFormat: { type: "json_object" },
 		});
 
-		const content = response.choices[0].message.content;
+		const content = response.choices?.[0]?.message?.content;
 		if (!content) {
-			throw new Error("No response from OpenAI");
+			throw new Error("No response from Mistral AI");
 		}
 
 		const result = JSON.parse(content);
@@ -243,7 +243,7 @@ Be empathetic and consider the overall tone and context.`;
 		const emotion = result.emotion.toLowerCase();
 		if (!EMOTIONS.includes(emotion)) {
 			functions.logger.warn(
-				`OpenAI returned unexpected emotion: ${emotion}, ` +
+				`Mistral AI returned unexpected emotion: ${emotion}, ` +
 					'defaulting to "confused"'
 			);
 			return {
@@ -256,7 +256,7 @@ Be empathetic and consider the overall tone and context.`;
 		const confidenceScore = Math.max(0, Math.min(1, result.confidence || 0.5));
 
 		functions.logger.info(
-			`OpenAI analysis: ${emotion} (${confidenceScore}), ` +
+			`Mistral AI analysis: ${emotion} (${confidenceScore}), ` +
 				`reasoning: ${result.reasoning}`
 		);
 
@@ -265,13 +265,13 @@ Be empathetic and consider the overall tone and context.`;
 			confidenceScore,
 		};
 	} catch (error) {
-		functions.logger.error("OpenAI API error:", error);
-		throw new Error(`Failed to analyze mood with OpenAI: ${error}`);
+		functions.logger.error("Mistral AI API error:", error);
+		throw new Error(`Failed to analyze mood with Mistral AI: ${error}`);
 	}
 }
 
 /**
- * Generate personalized recommendations based on mood using OpenAI
+ * Generate personalized recommendations based on mood using Mistral AI
  */
 async function generateRecommendations(
 	emotion: string,
@@ -298,9 +298,9 @@ Respond in JSON format with:
 
 Keep each recommendation brief (1-2 sentences) and focused on immediate, helpful actions.`;
 
-		const openai = getOpenAIClient();
-		const response = await openai.chat.completions.create({
-			model: "gpt-3.5-turbo",
+		const mistral = getMistralClient();
+		const response = await mistral.chat({
+			model: "mistral-small-latest",
 			messages: [
 				{
 					role: "system",
@@ -315,13 +315,13 @@ Keep each recommendation brief (1-2 sentences) and focused on immediate, helpful
 				},
 			],
 			temperature: 0.7,
-			max_tokens: 300,
-			response_format: { type: "json_object" },
+			maxTokens: 300,
+			responseFormat: { type: "json_object" },
 		});
 
-		const content = response.choices[0].message.content;
+		const content = response.choices?.[0]?.message?.content;
 		if (!content) {
-			throw new Error("No response from OpenAI for recommendations");
+			throw new Error("No response from Mistral AI for recommendations");
 		}
 
 		const result = JSON.parse(content);
@@ -331,7 +331,7 @@ Keep each recommendation brief (1-2 sentences) and focused on immediate, helpful
 			!Array.isArray(result.recommendations) ||
 			result.recommendations.length === 0
 		) {
-			throw new Error("Invalid recommendations format from OpenAI");
+			throw new Error("Invalid recommendations format from Mistral AI");
 		}
 
 		functions.logger.info(
@@ -340,7 +340,7 @@ Keep each recommendation brief (1-2 sentences) and focused on immediate, helpful
 
 		return result.recommendations;
 	} catch (error) {
-		functions.logger.error("OpenAI recommendations error:", error);
+		functions.logger.error("Mistral AI recommendations error:", error);
 		throw new Error(`Failed to generate recommendations: ${error}`);
 	}
 }
