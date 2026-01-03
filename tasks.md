@@ -49,16 +49,16 @@ This document breaks down the use cases into actionable development tasks, organ
 - [x] Fetch user role from Firestore after login
 - [x] Add role-based access (User vs Counsellor)
 
-### Task 1.3: User Roles & Permissions
+### Task 1.3: User Roles & Permissions ✅
 
 **Priority:** High  
 **Dependencies:** Task 1.2
 
-- [ ] Define user role enum (User, Counsellor, Admin)
-- [ ] Implement role assignment during registration in Firestore
-- [ ] Create Firestore Security Rules for role-based access control
-- [ ] Add permission checks using Firestore Security Rules
-- [ ] Implement client-side role checks for UI navigation
+- [x] Define user role enum (User, Counsellor, Admin)
+- [x] Implement role assignment during registration in Firestore
+- [x] Create Firestore Security Rules for role-based access control
+- [x] Add permission checks using Firestore Security Rules
+- [x] Implement client-side role checks for UI navigation
 
 ---
 

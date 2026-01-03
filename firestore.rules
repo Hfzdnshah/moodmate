@@ -1,0 +1,140 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if user is the owner
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Helper function to get user role from database
+    function getUserRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+    
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return isAuthenticated() && getUserRole() == 'admin';
+    }
+    
+    // Helper function to check if user is counsellor
+    function isCounsellor() {
+      return isAuthenticated() && getUserRole() == 'counsellor';
+    }
+    
+    // Helper function to check if user is regular user
+    function isUser() {
+      return isAuthenticated() && getUserRole() == 'user';
+    }
+    
+    // Users collection rules
+    match /users/{userId} {
+      // Anyone authenticated can read any user profile (for counsellor matching, etc.)
+      allow read: if isAuthenticated();
+      
+      // Users can only create their own profile during registration
+      allow create: if isOwner(userId) 
+                    && request.resource.data.keys().hasAll(['name', 'email', 'role', 'createdAt', 'updatedAt'])
+                    && request.resource.data.role in ['user', 'counsellor', 'admin'];
+      
+      // Users can only update their own profile
+      allow update: if isOwner(userId)
+                    && request.resource.data.role == resource.data.role; // Cannot change role
+      
+      // Only admins can delete user profiles
+      allow delete: if isAdmin();
+    }
+    
+    // Mood entries collection rules
+    match /mood_entries/{entryId} {
+      // Users can only read their own mood entries
+      // Counsellors can read their assigned clients' entries
+      allow read: if isOwner(resource.data.userId) 
+                  || (isCounsellor() && isAssignedCounsellor(resource.data.userId));
+      
+      // Users can only create their own mood entries
+      allow create: if isAuthenticated() 
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.keys().hasAll(['userId', 'text', 'timestamp']);
+      
+      // Users can update their own entries within 24 hours of creation
+      allow update: if isOwner(resource.data.userId)
+                    && request.time < resource.data.timestamp + duration.value(24, 'h');
+      
+      // Users can delete their own entries
+      allow delete: if isOwner(resource.data.userId) || isAdmin();
+    }
+    
+    // Helper function to check if counsellor is assigned to user
+    function isAssignedCounsellor(userId) {
+      return exists(/databases/$(database)/documents/counsellor_assignments/$(userId))
+          && get(/databases/$(database)/documents/counsellor_assignments/$(userId)).data.counsellorId == request.auth.uid;
+    }
+    
+    // Counsellor assignments collection rules
+    match /counsellor_assignments/{userId} {
+      // Users can read their own assignment
+      // Counsellors can read assignments they're part of
+      allow read: if isOwner(userId) 
+                  || (isCounsellor() && resource.data.counsellorId == request.auth.uid);
+      
+      // Only counsellors can create assignments
+      allow create: if isCounsellor() 
+                    && request.resource.data.counsellorId == request.auth.uid;
+      
+      // Only the assigned counsellor or admin can update
+      allow update: if (isCounsellor() && resource.data.counsellorId == request.auth.uid) 
+                    || isAdmin();
+      
+      // Only admins can delete assignments
+      allow delete: if isAdmin();
+    }
+    
+    // Messages collection rules
+    match /messages/{messageId} {
+      // Users can read messages where they are sender or recipient
+      allow read: if isAuthenticated() 
+                  && (resource.data.senderId == request.auth.uid 
+                      || resource.data.recipientId == request.auth.uid);
+      
+      // Users can send messages to their assigned counsellor
+      // Counsellors can send messages to their assigned clients
+      allow create: if isAuthenticated()
+                    && request.resource.data.senderId == request.auth.uid
+                    && (
+                      (isUser() && isAssignedCounsellor(request.auth.uid))
+                      || (isCounsellor() && isAssignedCounsellor(request.resource.data.recipientId))
+                    );
+      
+      // Messages cannot be updated or deleted (only soft delete via status field)
+      allow update: if isAuthenticated()
+                    && resource.data.senderId == request.auth.uid
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']);
+      
+      allow delete: if false; // Hard delete not allowed
+    }
+    
+    // Recommendations collection rules
+    match /recommendations/{recommendationId} {
+      // Users can read their own recommendations
+      allow read: if isOwner(resource.data.userId);
+      
+      // System (Cloud Functions) can create recommendations
+      // In practice, only Cloud Functions should write here
+      allow create: if false; // Will be created by Cloud Functions
+      
+      // Cannot update or delete recommendations
+      allow update, delete: if false;
+    }
+    
+    // Admin-only collections
+    match /admin/{document=**} {
+      allow read, write: if isAdmin();
+    }
+  }
+}
