@@ -131,7 +131,10 @@ class _CounsellorDetailScreenState extends State<CounsellorDetailScreen> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Counsellor')),
+      appBar: AppBar(
+        title: const Text('Counsellor Profile'),
+        centerTitle: true,
+      ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -139,33 +142,55 @@ class _CounsellorDetailScreenState extends State<CounsellorDetailScreen> {
             // Header Section with Profile
             Container(
               padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(color: colorScheme.surfaceContainerLow),
+              decoration: BoxDecoration(
+                color: colorScheme.surface,
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(32),
+                  bottomRight: Radius.circular(32),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
               child: Column(
                 children: [
-                  CircleAvatar(
-                    radius: 56,
-                    backgroundColor: colorScheme.primaryContainer,
-                    backgroundImage: widget.counsellor.profileImageUrl != null
-                        ? NetworkImage(widget.counsellor.profileImageUrl!)
-                        : null,
-                    child: widget.counsellor.profileImageUrl == null
-                        ? Text(
-                            widget.counsellor.name.isNotEmpty
-                                ? widget.counsellor.name[0].toUpperCase()
-                                : '?',
-                            style: TextStyle(
-                              fontSize: 40,
-                              fontWeight: FontWeight.w800,
-                              color: colorScheme.onPrimaryContainer,
-                            ),
-                          )
-                        : null,
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: colorScheme.primary.withOpacity(0.2),
+                        width: 4,
+                      ),
+                    ),
+                    child: CircleAvatar(
+                      radius: 60,
+                      backgroundColor: colorScheme.primaryContainer,
+                      backgroundImage: widget.counsellor.profileImageUrl != null
+                          ? NetworkImage(widget.counsellor.profileImageUrl!)
+                          : null,
+                      child: widget.counsellor.profileImageUrl == null
+                          ? Text(
+                              widget.counsellor.name.isNotEmpty
+                                  ? widget.counsellor.name[0].toUpperCase()
+                                  : '?',
+                              style: TextStyle(
+                                fontSize: 48,
+                                fontWeight: FontWeight.bold,
+                                color: colorScheme.onPrimaryContainer,
+                              ),
+                            )
+                          : null,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   Text(
                     widget.counsellor.name,
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.bold,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -174,12 +199,13 @@ class _CounsellorDetailScreenState extends State<CounsellorDetailScreen> {
                     Text(
                       widget.counsellor.specialization!,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
+                        color: colorScheme.primary,
+                        fontWeight: FontWeight.w500,
                       ),
                       textAlign: TextAlign.center,
                     ),
                   ],
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 16),
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
@@ -188,20 +214,30 @@ class _CounsellorDetailScreenState extends State<CounsellorDetailScreen> {
                     decoration: BoxDecoration(
                       color: _getStatusColor(
                         widget.counsellor.status,
-                      ).withAlpha(26),
+                      ).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: _getStatusColor(widget.counsellor.status),
-                        width: 2,
-                      ),
                     ),
-                    child: Text(
-                      _getStatusText(widget.counsellor.status),
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: _getStatusColor(widget.counsellor.status),
-                        fontWeight: FontWeight.w700,
-                      ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: _getStatusColor(widget.counsellor.status),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          _getStatusText(widget.counsellor.status),
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: _getStatusColor(widget.counsellor.status),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -210,38 +246,58 @@ class _CounsellorDetailScreenState extends State<CounsellorDetailScreen> {
 
             // Details Section
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+              padding: const EdgeInsets.all(24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (widget.counsellor.yearsOfExperience != null) ...[
-                    _buildDetailItem(
-                      icon: Icons.school,
-                      title: 'Experience',
-                      value: '${widget.counsellor.yearsOfExperience} years',
+                  Text(
+                    'About',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
                     ),
-                    const SizedBox(height: 16),
-                  ],
-                  if (widget.counsellor.bio != null) ...[
-                    _buildDetailItem(
-                      icon: Icons.info_outline,
-                      title: 'About',
-                      value: widget.counsellor.bio!,
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(color: Colors.grey.withOpacity(0.1)),
                     ),
-                    const SizedBox(height: 16),
-                  ],
-                  if (widget.counsellor.availableHours.isNotEmpty) ...[
-                    _buildDetailItem(
-                      icon: Icons.access_time,
-                      title: 'Available Hours',
-                      value: widget.counsellor.availableHours.join(', '),
+                    child: Column(
+                      children: [
+                        if (widget.counsellor.yearsOfExperience != null) ...[
+                          _buildDetailItem(
+                            icon: Icons.school_rounded,
+                            title: 'Experience',
+                            value:
+                                '${widget.counsellor.yearsOfExperience} years',
+                          ),
+                          const Divider(height: 32),
+                        ],
+                        if (widget.counsellor.bio != null) ...[
+                          _buildDetailItem(
+                            icon: Icons.info_outline_rounded,
+                            title: 'Bio',
+                            value: widget.counsellor.bio!,
+                          ),
+                          const Divider(height: 32),
+                        ],
+                        if (widget.counsellor.availableHours.isNotEmpty) ...[
+                          _buildDetailItem(
+                            icon: Icons.access_time_rounded,
+                            title: 'Available Hours',
+                            value: widget.counsellor.availableHours.join(', '),
+                          ),
+                          const Divider(height: 32),
+                        ],
+                        _buildDetailItem(
+                          icon: Icons.email_outlined,
+                          title: 'Email',
+                          value: widget.counsellor.email,
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 16),
-                  ],
-                  _buildDetailItem(
-                    icon: Icons.email,
-                    title: 'Email',
-                    value: widget.counsellor.email,
                   ),
                   const SizedBox(height: 32),
 
@@ -250,28 +306,29 @@ class _CounsellorDetailScreenState extends State<CounsellorDetailScreen> {
                     const Center(child: CircularProgressIndicator())
                   else if (_hasPendingRequest)
                     Container(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: colorScheme.secondaryContainer,
-                        borderRadius: BorderRadius.circular(12),
+                        color: colorScheme.secondaryContainer.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(24),
                         border: Border.all(
-                          color: colorScheme.outlineVariant,
-                          width: 1,
+                          color: colorScheme.secondaryContainer,
                         ),
                       ),
                       child: Row(
                         children: [
                           Icon(
-                            Icons.info_outline,
-                            color: colorScheme.onSecondaryContainer,
+                            Icons.info_outline_rounded,
+                            color: colorScheme.secondary,
+                            size: 28,
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(width: 16),
                           Expanded(
                             child: Text(
                               'You already have a pending support request. Please wait for a response.',
                               style: TextStyle(
-                                color: colorScheme.onSecondaryContainer,
+                                color: colorScheme.onSurface,
                                 fontSize: 14,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ),
@@ -285,7 +342,7 @@ class _CounsellorDetailScreenState extends State<CounsellorDetailScreen> {
                         Text(
                           'Request Support',
                           style: Theme.of(context).textTheme.titleLarge
-                              ?.copyWith(fontWeight: FontWeight.w700),
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 8),
                         Text(
@@ -297,26 +354,37 @@ class _CounsellorDetailScreenState extends State<CounsellorDetailScreen> {
                         TextField(
                           controller: _messageController,
                           maxLines: 5,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             hintText: 'Tell us how we can help...',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide.none,
+                            ),
+                            filled: true,
+                            fillColor: Colors.white,
+                            contentPadding: const EdgeInsets.all(16),
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 24),
                         SizedBox(
                           width: double.infinity,
                           child: FilledButton(
                             onPressed: _isSubmitting
                                 ? null
                                 : _submitSupportRequest,
+                            style: FilledButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                            ),
                             child: _isSubmitting
                                 ? const SizedBox(
-                                    height: 20,
-                                    width: 20,
+                                    height: 24,
+                                    width: 24,
                                     child: CircularProgressIndicator(
-                                      strokeWidth: 2,
+                                      strokeWidth: 2.5,
+                                      color: Colors.white,
                                     ),
                                   )
-                                : const Text('Submit request'),
+                                : const Text('Submit Request'),
                           ),
                         ),
                       ],
@@ -339,8 +407,15 @@ class _CounsellorDetailScreenState extends State<CounsellorDetailScreen> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 22, color: colorScheme.onSurfaceVariant),
-        const SizedBox(width: 12),
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, size: 20, color: colorScheme.primary),
+        ),
+        const SizedBox(width: 16),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -357,8 +432,9 @@ class _CounsellorDetailScreenState extends State<CounsellorDetailScreen> {
               Text(
                 value,
                 style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  height: 1.4,
                 ),
               ),
             ],

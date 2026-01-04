@@ -69,10 +69,11 @@ class _CounsellorListScreenState extends State<CounsellorListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Contact a counsellor'),
+        title: const Text('Find a Counsellor'),
+        centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh_rounded),
             onPressed: _loadCounsellors,
           ),
         ],
@@ -93,7 +94,11 @@ class _CounsellorListScreenState extends State<CounsellorListScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 64, color: colorScheme.error),
+            Icon(
+              Icons.error_outline_rounded,
+              size: 64,
+              color: colorScheme.error,
+            ),
             const SizedBox(height: 16),
             Text(
               'Failed to load counsellors',
@@ -117,7 +122,7 @@ class _CounsellorListScreenState extends State<CounsellorListScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.people_outline,
+              Icons.people_outline_rounded,
               size: 64,
               color: colorScheme.onSurfaceVariant,
             ),
@@ -153,118 +158,167 @@ class _CounsellorListScreenState extends State<CounsellorListScreen> {
 
   Widget _buildCounsellorCard(CounsellorModel counsellor) {
     final colorScheme = Theme.of(context).colorScheme;
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  CounsellorDetailScreen(counsellor: counsellor),
-            ),
-          );
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Profile Image
-              CircleAvatar(
-                radius: 32,
-                backgroundColor: colorScheme.primaryContainer,
-                backgroundImage: counsellor.profileImageUrl != null
-                    ? NetworkImage(counsellor.profileImageUrl!)
-                    : null,
-                child: counsellor.profileImageUrl == null
-                    ? Text(
-                        counsellor.name.isNotEmpty
-                            ? counsellor.name[0].toUpperCase()
-                            : '?',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
-                          color: colorScheme.onPrimaryContainer,
-                        ),
-                      )
-                    : null,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.grey.withOpacity(0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    CounsellorDetailScreen(counsellor: counsellor),
               ),
-              const SizedBox(width: 16),
-              // Counsellor Info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            counsellor.name,
-                            style: Theme.of(context).textTheme.titleMedium
-                                ?.copyWith(fontWeight: FontWeight.w700),
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: _getStatusColor(
-                              counsellor.status,
-                            ).withAlpha(26),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: _getStatusColor(counsellor.status),
-                              width: 1,
-                            ),
-                          ),
-                          child: Text(
-                            _getStatusText(counsellor.status),
+            );
+          },
+          borderRadius: BorderRadius.circular(24),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Profile Image
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: colorScheme.primary.withOpacity(0.2),
+                      width: 2,
+                    ),
+                  ),
+                  child: CircleAvatar(
+                    radius: 32,
+                    backgroundColor: colorScheme.primaryContainer,
+                    backgroundImage: counsellor.profileImageUrl != null
+                        ? NetworkImage(counsellor.profileImageUrl!)
+                        : null,
+                    child: counsellor.profileImageUrl == null
+                        ? Text(
+                            counsellor.name.isNotEmpty
+                                ? counsellor.name[0].toUpperCase()
+                                : '?',
                             style: TextStyle(
-                              fontSize: 12,
-                              color: _getStatusColor(counsellor.status),
-                              fontWeight: FontWeight.w600,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: colorScheme.onPrimaryContainer,
+                            ),
+                          )
+                        : null,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                // Counsellor Info
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              counsellor.name,
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold),
                             ),
                           ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: _getStatusColor(
+                                counsellor.status,
+                              ).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 6,
+                                  height: 6,
+                                  decoration: BoxDecoration(
+                                    color: _getStatusColor(counsellor.status),
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  _getStatusText(counsellor.status),
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: _getStatusColor(counsellor.status),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (counsellor.specialization != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          counsellor.specialization!,
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: colorScheme.primary,
+                                fontWeight: FontWeight.w500,
+                              ),
                         ),
                       ],
-                    ),
-                    if (counsellor.specialization != null) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        counsellor.specialization!,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                          fontWeight: FontWeight.w600,
+                      if (counsellor.yearsOfExperience != null) ...[
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.work_outline_rounded,
+                              size: 14,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${counsellor.yearsOfExperience} years exp.',
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                    if (counsellor.yearsOfExperience != null) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        '${counsellor.yearsOfExperience} years of experience',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
+                      ],
+                      if (counsellor.bio != null) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          counsellor.bio!,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                                height: 1.4,
+                              ),
                         ),
-                      ),
+                      ],
                     ],
-                    if (counsellor.bio != null) ...[
-                      const SizedBox(height: 8),
-                      Text(
-                        counsellor.bio!,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
-                  ],
+                  ),
                 ),
-              ),
-              const SizedBox(width: 8),
-              Icon(Icons.chevron_right, color: colorScheme.onSurfaceVariant),
-            ],
+              ],
+            ),
           ),
         ),
       ),

@@ -150,16 +150,33 @@ class _ConversationScreenState extends State<ConversationScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(widget.otherUserName),
             Text(
-              'Online',
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-                fontWeight: FontWeight.w500,
-              ),
+              widget.otherUserName,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            Row(
+              children: [
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: const BoxDecoration(
+                    color: Colors.green,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  'Online',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
+        centerTitle: false,
       ),
       body: Column(
         children: [
@@ -173,6 +190,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
   }
 
   Widget _buildMessagesList() {
+    final colorScheme = Theme.of(context).colorScheme;
+
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -182,7 +201,11 @@ class _ConversationScreenState extends State<ConversationScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline, size: 64, color: Colors.red),
+            Icon(
+              Icons.error_outline_rounded,
+              size: 64,
+              color: colorScheme.error,
+            ),
             const SizedBox(height: 16),
             Text(
               'Failed to load messages',
@@ -200,7 +223,11 @@ class _ConversationScreenState extends State<ConversationScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.chat_bubble_outline, size: 64, color: Colors.grey),
+            Icon(
+              Icons.chat_bubble_outline_rounded,
+              size: 64,
+              color: colorScheme.onSurfaceVariant,
+            ),
             const SizedBox(height: 16),
             Text(
               'No messages yet',
@@ -237,20 +264,32 @@ class _ConversationScreenState extends State<ConversationScreen> {
   Widget _buildDateDivider(DateTime date) {
     final colorScheme = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16),
+      padding: const EdgeInsets.symmetric(vertical: 24),
       child: Row(
         children: [
-          Expanded(child: Divider(color: colorScheme.outlineVariant)),
+          Expanded(
+            child: Divider(color: colorScheme.outlineVariant.withOpacity(0.5)),
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              _formatDate(date),
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: colorScheme.onSurfaceVariant,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                color: colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                _formatDate(date),
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),
-          Expanded(child: Divider(color: colorScheme.outlineVariant)),
+          Expanded(
+            child: Divider(color: colorScheme.outlineVariant.withOpacity(0.5)),
+          ),
         ],
       ),
     );
@@ -259,10 +298,10 @@ class _ConversationScreenState extends State<ConversationScreen> {
   Widget _buildMessageBubble(MessageModel message, bool isMe) {
     final colorScheme = Theme.of(context).colorScheme;
     final bubbleColor = isMe
-        ? colorScheme.primaryContainer
-        : colorScheme.surfaceContainerHighest;
+        ? colorScheme.primary
+        : colorScheme.surfaceContainerHighest.withOpacity(0.5);
     final bubbleTextColor = isMe
-        ? colorScheme.onPrimaryContainer
+        ? colorScheme.onPrimary
         : colorScheme.onSurface;
 
     return Align(
@@ -270,7 +309,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
       child: Container(
         margin: const EdgeInsets.only(bottom: 8),
         constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.7,
+          maxWidth: MediaQuery.of(context).size.width * 0.75,
         ),
         child: Column(
           crossAxisAlignment: isMe
@@ -278,19 +317,30 @@ class _ConversationScreenState extends State<ConversationScreen> {
               : CrossAxisAlignment.start,
           children: [
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 color: bubbleColor,
                 borderRadius: BorderRadius.only(
-                  topLeft: const Radius.circular(16),
-                  topRight: const Radius.circular(16),
-                  bottomLeft: Radius.circular(isMe ? 16 : 4),
-                  bottomRight: Radius.circular(isMe ? 4 : 16),
+                  topLeft: const Radius.circular(20),
+                  topRight: const Radius.circular(20),
+                  bottomLeft: Radius.circular(isMe ? 20 : 4),
+                  bottomRight: Radius.circular(isMe ? 4 : 20),
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: Text(
                 message.content,
-                style: TextStyle(color: bubbleTextColor, fontSize: 15),
+                style: TextStyle(
+                  color: bubbleTextColor,
+                  fontSize: 15,
+                  height: 1.4,
+                ),
               ),
             ),
             const SizedBox(height: 4),
@@ -299,15 +349,17 @@ class _ConversationScreenState extends State<ConversationScreen> {
               children: [
                 Text(
                   _formatTime(message.timestamp),
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     color: colorScheme.onSurfaceVariant,
-                    fontSize: 11,
+                    fontSize: 10,
                   ),
                 ),
                 if (isMe) ...[
                   const SizedBox(width: 4),
                   Icon(
-                    message.isRead ? Icons.done_all : Icons.done,
+                    message.isRead
+                        ? Icons.done_all_rounded
+                        : Icons.check_rounded,
                     size: 14,
                     color: message.isRead
                         ? colorScheme.primary
@@ -325,48 +377,70 @@ class _ConversationScreenState extends State<ConversationScreen> {
   Widget _buildMessageInput() {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       decoration: BoxDecoration(
-        color: colorScheme.surface,
-        border: Border(top: BorderSide(color: colorScheme.outlineVariant)),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, -4),
+          ),
+        ],
       ),
       child: SafeArea(
         child: Row(
           children: [
             Expanded(
-              child: TextField(
-                controller: _messageController,
-                decoration: InputDecoration(
-                  hintText: 'Type a message...',
-                  filled: true,
-                  fillColor: colorScheme.surfaceContainerHighest,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(24),
                 ),
-                maxLines: null,
-                textCapitalization: TextCapitalization.sentences,
-                onSubmitted: (_) => _sendMessage(),
+                child: TextField(
+                  controller: _messageController,
+                  decoration: InputDecoration(
+                    hintText: 'Type a message...',
+                    hintStyle: TextStyle(color: colorScheme.onSurfaceVariant),
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 12,
+                    ),
+                  ),
+                  maxLines: null,
+                  textCapitalization: TextCapitalization.sentences,
+                  onSubmitted: (_) => _sendMessage(),
+                ),
               ),
             ),
-            const SizedBox(width: 8),
-            SizedBox(
-              height: 44,
-              width: 44,
-              child: FilledButton(
+            const SizedBox(width: 12),
+            Container(
+              height: 48,
+              width: 48,
+              decoration: BoxDecoration(
+                color: colorScheme.primary,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: colorScheme.primary.withOpacity(0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: IconButton(
                 onPressed: _isSending ? null : _sendMessage,
-                style: FilledButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  shape: const CircleBorder(),
-                ),
-                child: _isSending
+                icon: _isSending
                     ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          color: Colors.white,
+                        ),
                       )
-                    : const Icon(Icons.send),
+                    : const Icon(Icons.send_rounded, color: Colors.white),
               ),
             ),
           ],

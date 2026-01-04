@@ -61,23 +61,31 @@ class PermissionGuard extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Access denied')),
+      appBar: AppBar(title: const Text('Access Denied'), centerTitle: true),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+          padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.lock_outline,
-                size: 64,
-                color: colorScheme.onSurfaceVariant,
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: colorScheme.errorContainer.withOpacity(0.3),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.lock_outline_rounded,
+                  size: 64,
+                  color: colorScheme.error,
+                ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 32),
               Text(
                 'Access Denied',
                 style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 16),
@@ -85,15 +93,27 @@ class PermissionGuard extends StatelessWidget {
                 message ?? 'You do not have permission to access this feature.',
                 style: theme.textTheme.bodyLarge?.copyWith(
                   color: colorScheme.onSurfaceVariant,
+                  height: 1.5,
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 32),
-              FilledButton.tonal(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Go back'),
+              const SizedBox(height: 40),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.tonal(
+                  onPressed: () {
+                    if (Navigator.canPop(context)) {
+                      Navigator.of(context).pop();
+                    } else {
+                      // If can't pop, maybe redirect to home or show a message
+                      // For now, just stay here as it's a guard
+                    }
+                  },
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: const Text('Go Back'),
+                ),
               ),
             ],
           ),

@@ -155,7 +155,10 @@ class _SupportRequestsScreenState extends State<SupportRequestsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('My Support Requests')),
+      appBar: AppBar(
+        title: const Text('My Support Requests'),
+        centerTitle: true,
+      ),
       body: _buildBody(),
     );
   }
@@ -172,7 +175,11 @@ class _SupportRequestsScreenState extends State<SupportRequestsScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 64, color: colorScheme.error),
+            Icon(
+              Icons.error_outline_rounded,
+              size: 64,
+              color: colorScheme.error,
+            ),
             const SizedBox(height: 16),
             Text(
               'Failed to load support requests',
@@ -191,7 +198,7 @@ class _SupportRequestsScreenState extends State<SupportRequestsScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.support_agent,
+              Icons.support_agent_rounded,
               size: 64,
               color: colorScheme.onSurfaceVariant,
             ),
@@ -221,52 +228,79 @@ class _SupportRequestsScreenState extends State<SupportRequestsScreen> {
     final colorScheme = Theme.of(context).colorScheme;
     final canCancel = request.status == SupportRequestStatus.pending;
 
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.grey.withOpacity(0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Icon(
-                  _getStatusIcon(request.status),
-                  color: _getStatusColor(request.status),
-                  size: 24,
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: _getStatusColor(request.status).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    _getStatusIcon(request.status),
+                    color: _getStatusColor(request.status),
+                    size: 20,
+                  ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     _getStatusText(request.status),
                     style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                       color: _getStatusColor(request.status),
                     ),
                   ),
                 ),
                 if (canCancel)
                   IconButton(
-                    icon: const Icon(Icons.cancel, color: Colors.red),
+                    icon: const Icon(Icons.cancel_outlined, color: Colors.red),
                     onPressed: () => _cancelRequest(request.id),
                     tooltip: 'Cancel Request',
                   ),
               ],
             ),
-            const Divider(height: 24),
+            const Divider(height: 32),
             if (request.message != null) ...[
               Text(
-                'Message:',
+                'Message',
                 style: TextStyle(
                   fontSize: 12,
                   color: colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.w600,
+                  letterSpacing: 0.5,
                 ),
               ),
-              const SizedBox(height: 4),
-              Text(request.message!, style: const TextStyle(fontSize: 14)),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
+              Text(
+                request.message!,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: colorScheme.onSurface,
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: 20),
             ],
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -275,16 +309,17 @@ class _SupportRequestsScreenState extends State<SupportRequestsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Created:',
+                      'Created',
                       style: TextStyle(
                         fontSize: 11,
                         color: colorScheme.onSurfaceVariant,
                       ),
                     ),
+                    const SizedBox(height: 4),
                     Text(
                       _formatDate(request.createdAt),
                       style: const TextStyle(
-                        fontSize: 12,
+                        fontSize: 13,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -295,16 +330,17 @@ class _SupportRequestsScreenState extends State<SupportRequestsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        'Accepted:',
+                        'Accepted',
                         style: TextStyle(
                           fontSize: 11,
                           color: colorScheme.onSurfaceVariant,
                         ),
                       ),
+                      const SizedBox(height: 4),
                       Text(
                         _formatDate(request.acceptedAt!),
                         style: const TextStyle(
-                          fontSize: 12,
+                          fontSize: 13,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -313,7 +349,7 @@ class _SupportRequestsScreenState extends State<SupportRequestsScreen> {
               ],
             ),
             if (request.conversationThreadId != null) ...[
-              const SizedBox(height: 12),
+              const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
                 child: FilledButton.tonal(
@@ -368,7 +404,13 @@ class _SupportRequestsScreenState extends State<SupportRequestsScreen> {
                       }
                     }
                   },
-                  child: const Text('View conversation'),
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text('View Conversation'),
                 ),
               ),
             ],

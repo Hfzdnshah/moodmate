@@ -97,60 +97,101 @@ class _MoodEntryDetailScreenState extends State<MoodEntryDetailScreen> {
 
   Widget _buildDateCard(MoodEntry entry) {
     final colorScheme = Theme.of(context).colorScheme;
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
-            Icon(Icons.calendar_today, color: colorScheme.primary),
-            const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _formatDate(entry.date),
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                Text(
-                  _formatTime(entry.timestamp),
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              ],
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.grey.withOpacity(0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: colorScheme.primaryContainer.withOpacity(0.3),
+              shape: BoxShape.circle,
             ),
-          ],
-        ),
+            child: Icon(
+              Icons.calendar_today_rounded,
+              color: colorScheme.primary,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                _formatDate(entry.date),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                _formatTime(entry.timestamp),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildMoodTextCard(MoodEntry entry) {
     final colorScheme = Theme.of(context).colorScheme;
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.edit_note, color: colorScheme.secondary),
-                const SizedBox(width: 8),
-                const Text(
-                  'Your Journal Entry',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.grey.withOpacity(0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.edit_note_rounded, color: colorScheme.secondary),
+              const SizedBox(width: 8),
+              Text(
+                'Your Journal Entry',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.secondary,
                 ),
-              ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            entry.text,
+            style: TextStyle(
+              fontSize: 16,
+              height: 1.6,
+              color: colorScheme.onSurface,
             ),
-            const SizedBox(height: 12),
-            Text(entry.text, style: const TextStyle(fontSize: 15, height: 1.5)),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -158,71 +199,69 @@ class _MoodEntryDetailScreenState extends State<MoodEntryDetailScreen> {
   Widget _buildAnalysisCard(MoodEntry entry) {
     final colorScheme = Theme.of(context).colorScheme;
     if (entry.analysisStatus == 'pending') {
-      return Card(
-        color: colorScheme.secondaryContainer,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: [
-              SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    colorScheme.onSecondaryContainer,
-                  ),
-                ),
+      return Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: colorScheme.secondaryContainer.withOpacity(0.3),
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(
+                strokeWidth: 2.5,
+                valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
               ),
-              const SizedBox(width: 12),
-              const Expanded(
-                child: Text(
-                  'Analyzing your mood...',
-                  style: TextStyle(fontSize: 15),
-                ),
+            ),
+            const SizedBox(width: 16),
+            const Expanded(
+              child: Text(
+                'Analyzing your mood...',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       );
     }
 
     if (entry.analysisStatus == 'failed') {
-      return Card(
-        color: colorScheme.errorContainer,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.error_outline,
-                    color: colorScheme.onErrorContainer,
-                  ),
-                  const SizedBox(width: 12),
-                  const Expanded(
-                    child: Text(
-                      'Analysis failed',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                      ),
+      return Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: colorScheme.errorContainer.withOpacity(0.3),
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.error_outline_rounded, color: colorScheme.error),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Analysis failed',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.error,
                     ),
                   ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'We couldn\'t analyze this entry. Please try again later.',
-                style: TextStyle(
-                  fontSize: 13,
-                  color: colorScheme.onErrorContainer,
                 ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'We couldn\'t analyze this entry. Please try again later.',
+              style: TextStyle(
+                fontSize: 14,
+                color: colorScheme.onErrorContainer,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       );
     }
@@ -231,38 +270,56 @@ class _MoodEntryDetailScreenState extends State<MoodEntryDetailScreen> {
       return const SizedBox.shrink();
     }
 
-    return Card(
-      color: _getEmotionColor(entry.emotion!).withAlpha(26),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  _getEmotionIcon(entry.emotion!),
-                  color: _getEmotionColor(entry.emotion!),
-                ),
-                const SizedBox(width: 8),
-                const Text(
-                  'Detected Emotion',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Text(
-              _capitalizeFirst(entry.emotion!),
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w800,
-                color: _getEmotionColor(entry.emotion!),
+    final emotionColor = _getEmotionColor(entry.emotion!);
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: emotionColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: emotionColor.withOpacity(0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                _getEmotionIcon(entry.emotion!),
+                color: emotionColor,
+                size: 28,
               ),
+              const SizedBox(width: 12),
+              Text(
+                'Detected Emotion',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: emotionColor,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            _capitalizeFirst(entry.emotion!),
+            style: TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.w800,
+              color: emotionColor,
+              letterSpacing: -0.5,
             ),
-            if (entry.confidenceScore != null) ...[
-              const SizedBox(height: 8),
-              Row(
+          ),
+          if (entry.confidenceScore != null) ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     'Confidence: ',
@@ -273,13 +330,17 @@ class _MoodEntryDetailScreenState extends State<MoodEntryDetailScreen> {
                   ),
                   Text(
                     '${(entry.confidenceScore! * 100).toStringAsFixed(0)}%',
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.onSurface,
+                    ),
                   ),
                 ],
               ),
-            ],
+            ),
           ],
-        ),
+        ],
       ),
     );
   }
@@ -292,89 +353,101 @@ class _MoodEntryDetailScreenState extends State<MoodEntryDetailScreen> {
       return const SizedBox.shrink();
     }
 
-    return Card(
-      color: colorScheme.tertiaryContainer,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.lightbulb, color: colorScheme.tertiary),
-                const SizedBox(width: 8),
-                const Text(
-                  'Personalized Recommendations',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: colorScheme.tertiaryContainer.withOpacity(0.3),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: colorScheme.tertiaryContainer.withOpacity(0.5),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.lightbulb_rounded, color: colorScheme.tertiary),
+              const SizedBox(width: 12),
+              Text(
+                'Recommendations',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.tertiary,
                 ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            ...entry.recommendations!.asMap().entries.map((e) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 24,
-                      height: 24,
-                      decoration: BoxDecoration(
-                        color: colorScheme.onTertiaryContainer,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: Text(
-                          '${e.key + 1}',
-                          style: TextStyle(
-                            color: colorScheme.tertiaryContainer,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                          ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          ...entry.recommendations!.asMap().entries.map((e) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 28,
+                    height: 28,
+                    decoration: BoxDecoration(
+                      color: colorScheme.tertiary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Text(
+                        '${e.key + 1}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        e.value,
-                        style: const TextStyle(fontSize: 15, height: 1.4),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }),
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: colorScheme.surface,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: colorScheme.outlineVariant),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.info_outline,
-                    size: 18,
-                    color: colorScheme.onSurfaceVariant,
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: Text(
-                      'These personalized suggestions are based on your mood entry.',
+                      e.value,
                       style: TextStyle(
-                        fontSize: 12,
-                        color: colorScheme.onSurfaceVariant,
+                        fontSize: 15,
+                        height: 1.5,
+                        color: colorScheme.onSurface,
                       ),
                     ),
                   ),
                 ],
               ),
+            );
+          }),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.5),
+              borderRadius: BorderRadius.circular(12),
             ),
-          ],
-        ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.info_outline_rounded,
+                  size: 20,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Personalized suggestions based on your mood.',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: colorScheme.onSurfaceVariant,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -131,12 +131,14 @@ class _CounsellorMessagesScreenState extends State<CounsellorMessagesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Messages')),
+      appBar: AppBar(title: const Text('Messages'), centerTitle: true),
       body: _buildBody(),
     );
   }
 
   Widget _buildBody() {
+    final colorScheme = Theme.of(context).colorScheme;
+
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -146,7 +148,11 @@ class _CounsellorMessagesScreenState extends State<CounsellorMessagesScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline, size: 64, color: Colors.red),
+            Icon(
+              Icons.error_outline_rounded,
+              size: 64,
+              color: colorScheme.error,
+            ),
             const SizedBox(height: 16),
             Text(
               'Failed to load conversations',
@@ -164,7 +170,11 @@ class _CounsellorMessagesScreenState extends State<CounsellorMessagesScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.chat_bubble_outline, size: 64, color: Colors.grey),
+            Icon(
+              Icons.chat_bubble_outline_rounded,
+              size: 64,
+              color: colorScheme.onSurfaceVariant,
+            ),
             const SizedBox(height: 16),
             Text(
               'No conversations',
@@ -178,7 +188,7 @@ class _CounsellorMessagesScreenState extends State<CounsellorMessagesScreen> {
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
       itemCount: _conversations.length,
       itemBuilder: (context, index) {
         final convData = _conversations[index];
@@ -204,108 +214,167 @@ class _CounsellorMessagesScreenState extends State<CounsellorMessagesScreen> {
     DateTime? lastMessageAt,
   ) {
     final colorScheme = Theme.of(context).colorScheme;
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: ListTile(
-        leading: Stack(
-          children: [
-            CircleAvatar(
-              backgroundColor: colorScheme.secondaryContainer,
-              child: Text(
-                userName.isNotEmpty ? userName[0].toUpperCase() : '?',
-                style: TextStyle(
-                  color: colorScheme.onSecondaryContainer,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-            if (unreadCount > 0)
-              Positioned(
-                right: 0,
-                top: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: colorScheme.error,
-                    shape: BoxShape.circle,
-                  ),
-                  constraints: const BoxConstraints(
-                    minWidth: 20,
-                    minHeight: 20,
-                  ),
-                  child: Text(
-                    unreadCount > 9 ? '9+' : '$unreadCount',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-          ],
-        ),
-        title: Text(
-          userName,
-          style: TextStyle(
-            fontWeight: unreadCount > 0 ? FontWeight.w700 : FontWeight.w500,
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.grey.withOpacity(0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
-        ),
-        subtitle: Text(
-          lastMessageAt != null
-              ? _formatDate(lastMessageAt)
-              : 'No messages yet',
-          style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant),
-        ),
-        trailing: const Icon(Icons.chevron_right),
-        onTap: () async {
-          if (request.conversationThreadId == null) return;
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () async {
+            if (request.conversationThreadId == null) return;
 
-          try {
-            // Get conversation thread details
-            final threadDoc = await _firestore
-                .collection('conversation_threads')
-                .doc(request.conversationThreadId)
-                .get();
+            try {
+              // Get conversation thread details
+              final threadDoc = await _firestore
+                  .collection('conversation_threads')
+                  .doc(request.conversationThreadId)
+                  .get();
 
-            if (!threadDoc.exists) {
+              if (!threadDoc.exists) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Conversation not found'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+                return;
+              }
+
+              final threadData = threadDoc.data()!;
+              final otherUserId = threadData['userId'] as String;
+
+              if (mounted) {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ConversationScreen(
+                      conversationThreadId: request.conversationThreadId!,
+                      otherUserId: otherUserId,
+                      otherUserName: userName,
+                    ),
+                  ),
+                );
+              }
+            } catch (e) {
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Conversation not found'),
+                  SnackBar(
+                    content: Text('Error: ${e.toString()}'),
                     backgroundColor: Colors.red,
                   ),
                 );
               }
-              return;
             }
-
-            final threadData = threadDoc.data()!;
-            final otherUserId = threadData['userId'] as String;
-
-            if (mounted) {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => ConversationScreen(
-                    conversationThreadId: request.conversationThreadId!,
-                    otherUserId: otherUserId,
-                    otherUserName: userName,
+          },
+          borderRadius: BorderRadius.circular(24),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Stack(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: colorScheme.secondary.withOpacity(0.2),
+                          width: 2,
+                        ),
+                      ),
+                      child: CircleAvatar(
+                        radius: 28,
+                        backgroundColor: colorScheme.secondaryContainer,
+                        child: Text(
+                          userName.isNotEmpty ? userName[0].toUpperCase() : '?',
+                          style: TextStyle(
+                            color: colorScheme.onSecondaryContainer,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+                    if (unreadCount > 0)
+                      Positioned(
+                        right: 0,
+                        top: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: colorScheme.error,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 2),
+                          ),
+                          constraints: const BoxConstraints(
+                            minWidth: 22,
+                            minHeight: 22,
+                          ),
+                          child: Text(
+                            unreadCount > 9 ? '9+' : '$unreadCount',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        userName,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: unreadCount > 0
+                              ? FontWeight.bold
+                              : FontWeight.w600,
+                          color: colorScheme.onSurface,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        lastMessageAt != null
+                            ? _formatDate(lastMessageAt)
+                            : 'No messages yet',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: unreadCount > 0
+                              ? colorScheme.primary
+                              : colorScheme.onSurfaceVariant,
+                          fontWeight: unreadCount > 0
+                              ? FontWeight.w600
+                              : FontWeight.normal,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              );
-            }
-          } catch (e) {
-            if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Error: ${e.toString()}'),
-                  backgroundColor: Colors.red,
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: colorScheme.onSurfaceVariant,
                 ),
-              );
-            }
-          }
-        },
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

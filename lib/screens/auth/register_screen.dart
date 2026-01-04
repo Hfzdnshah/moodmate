@@ -95,167 +95,206 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Create account')),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 24),
-                Icon(Icons.mood_rounded, size: 56, color: colorScheme.primary),
-                const SizedBox(height: 12),
-                Text(
-                  'MoodMate',
-                  style: theme.textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Header
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: colorScheme.primaryContainer.withOpacity(0.3),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.person_add_rounded,
+                      size: 48,
+                      color: colorScheme.primary,
+                    ),
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  'Create your account',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
+                  const SizedBox(height: 24),
+                  Text(
+                    'Create Account',
+                    style: theme.textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.onSurface,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 32),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Join MoodMate today',
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 32),
 
-                // Name field
-                TextFormField(
-                  controller: _nameController,
-                  decoration: InputDecoration(
-                    labelText: 'Full Name',
-                    prefixIcon: const Icon(Icons.person),
+                  // Name field
+                  TextFormField(
+                    controller: _nameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Full Name',
+                      prefixIcon: Icon(Icons.person_outline),
+                      hintText: 'Enter your full name',
+                    ),
+                    validator: Validators.validateName,
+                    textInputAction: TextInputAction.next,
                   ),
-                  validator: Validators.validateName,
-                  textInputAction: TextInputAction.next,
-                ),
-                const SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
-                // Email field
-                TextFormField(
-                  controller: _emailController,
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    prefixIcon: const Icon(Icons.email),
+                  // Email field
+                  TextFormField(
+                    controller: _emailController,
+                    decoration: const InputDecoration(
+                      labelText: 'Email',
+                      prefixIcon: Icon(Icons.email_outlined),
+                      hintText: 'Enter your email',
+                    ),
+                    keyboardType: TextInputType.emailAddress,
+                    validator: Validators.validateEmail,
+                    textInputAction: TextInputAction.next,
                   ),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: Validators.validateEmail,
-                  textInputAction: TextInputAction.next,
-                ),
-                const SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
-                // Password field
-                TextFormField(
-                  controller: _passwordController,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    prefixIcon: const Icon(Icons.lock),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword
-                            ? Icons.visibility
-                            : Icons.visibility_off,
+                  // Password field
+                  TextFormField(
+                    controller: _passwordController,
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      prefixIcon: const Icon(Icons.lock_outline),
+                      hintText: 'Create a password',
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
                       ),
-                      onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
                     ),
+                    obscureText: _obscurePassword,
+                    validator: Validators.validatePassword,
+                    textInputAction: TextInputAction.next,
                   ),
-                  obscureText: _obscurePassword,
-                  validator: Validators.validatePassword,
-                  textInputAction: TextInputAction.next,
-                ),
-                const SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
-                // Confirm Password field
-                TextFormField(
-                  controller: _confirmPasswordController,
-                  decoration: InputDecoration(
-                    labelText: 'Confirm Password',
-                    prefixIcon: const Icon(Icons.lock_outline),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscureConfirmPassword
-                            ? Icons.visibility
-                            : Icons.visibility_off,
+                  // Confirm Password field
+                  TextFormField(
+                    controller: _confirmPasswordController,
+                    decoration: InputDecoration(
+                      labelText: 'Confirm Password',
+                      prefixIcon: const Icon(Icons.lock_outline),
+                      hintText: 'Confirm your password',
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscureConfirmPassword
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscureConfirmPassword = !_obscureConfirmPassword;
+                          });
+                        },
                       ),
-                      onPressed: () {
-                        setState(() {
-                          _obscureConfirmPassword = !_obscureConfirmPassword;
-                        });
-                      },
                     ),
+                    obscureText: _obscureConfirmPassword,
+                    validator: (value) => Validators.validateConfirmPassword(
+                      value,
+                      _passwordController.text,
+                    ),
+                    textInputAction: TextInputAction.done,
                   ),
-                  obscureText: _obscureConfirmPassword,
-                  validator: (value) => Validators.validateConfirmPassword(
-                    value,
-                    _passwordController.text,
-                  ),
-                  textInputAction: TextInputAction.done,
-                ),
-                const SizedBox(height: 16),
+                  const SizedBox(height: 24),
 
-                // Role selection
-                DropdownButtonFormField<UserRole>(
-                  initialValue: _selectedRole,
-                  decoration: InputDecoration(
-                    labelText: 'I am a',
-                    prefixIcon: const Icon(Icons.badge),
-                  ),
-                  items: const [
-                    DropdownMenuItem(value: UserRole.user, child: Text('User')),
-                    DropdownMenuItem(
-                      value: UserRole.counsellor,
-                      child: Text('Counsellor'),
+                  // Role selection
+                  Text(
+                    'I am a:',
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                      fontWeight: FontWeight.bold,
                     ),
-                  ],
-                  onChanged: (UserRole? newValue) {
-                    if (newValue != null) {
+                  ),
+                  const SizedBox(height: 8),
+                  SegmentedButton<UserRole>(
+                    segments: const <ButtonSegment<UserRole>>[
+                      ButtonSegment<UserRole>(
+                        value: UserRole.user,
+                        label: Text('User'),
+                        icon: Icon(Icons.person_outline),
+                      ),
+                      ButtonSegment<UserRole>(
+                        value: UserRole.counsellor,
+                        label: Text('Counsellor'),
+                        icon: Icon(Icons.health_and_safety_outlined),
+                      ),
+                    ],
+                    selected: <UserRole>{_selectedRole},
+                    onSelectionChanged: (Set<UserRole> newSelection) {
                       setState(() {
-                        _selectedRole = newValue;
+                        _selectedRole = newSelection.first;
                       });
-                    }
-                  },
-                ),
-                const SizedBox(height: 24),
-
-                // Register button
-                FilledButton(
-                  onPressed: _isLoading ? null : _handleRegister,
-                  child: _isLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text('Create account'),
-                ),
-                const SizedBox(height: 16),
-
-                // Login link
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Already have an account? ',
-                      style: TextStyle(color: colorScheme.onSurfaceVariant),
+                    },
+                    style: ButtonStyle(
+                      padding: WidgetStateProperty.all(
+                        const EdgeInsets.symmetric(vertical: 12),
+                      ),
                     ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pushReplacementNamed('/login');
-                      },
-                      child: const Text('Sign In'),
+                  ),
+                  const SizedBox(height: 32),
+
+                  // Register button
+                  FilledButton(
+                    onPressed: _isLoading ? null : _handleRegister,
+                    style: FilledButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
-                  ],
-                ),
-              ],
+                    child: _isLoading
+                        ? const SizedBox(
+                            height: 24,
+                            width: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.5,
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Text('Create Account'),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Login link
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Already have an account? ',
+                        style: TextStyle(color: colorScheme.onSurfaceVariant),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pushReplacementNamed('/login');
+                        },
+                        child: const Text(
+                          'Sign In',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

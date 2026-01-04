@@ -127,7 +127,10 @@ class _UserMoodSummaryScreenState extends State<UserMoodSummaryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('${widget.user.name}\'s Mood Summary')),
+      appBar: AppBar(
+        title: Text('${widget.user.name}\'s Mood Summary'),
+        centerTitle: true,
+      ),
       body: _buildBody(),
     );
   }
@@ -144,7 +147,7 @@ class _UserMoodSummaryScreenState extends State<UserMoodSummaryScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.block, size: 64, color: colorScheme.error),
+            Icon(Icons.block_rounded, size: 64, color: colorScheme.error),
             const SizedBox(height: 16),
             Text(
               'Access Denied',
@@ -194,12 +197,31 @@ class _UserMoodSummaryScreenState extends State<UserMoodSummaryScreen> {
 
   Widget _buildUserInfoCard() {
     final colorScheme = Theme.of(context).colorScheme;
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            CircleAvatar(
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.grey.withOpacity(0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: colorScheme.primary.withOpacity(0.2),
+                width: 2,
+              ),
+            ),
+            child: CircleAvatar(
               radius: 32,
               backgroundColor: colorScheme.primaryContainer,
               child: Text(
@@ -208,69 +230,83 @@ class _UserMoodSummaryScreenState extends State<UserMoodSummaryScreen> {
                     : 'U',
                 style: TextStyle(
                   fontSize: 24,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.bold,
                   color: colorScheme.onPrimaryContainer,
                 ),
               ),
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.user.name,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.user.name,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  widget.user.email,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    widget.user.email,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildFilterOptions() {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Time Range',
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.grey.withOpacity(0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Time Range',
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          SegmentedButton<String>(
+            segments: const [
+              ButtonSegment(value: 'week', label: Text('Week')),
+              ButtonSegment(value: 'month', label: Text('Month')),
+              ButtonSegment(value: 'all', label: Text('All')),
+            ],
+            selected: {_selectedFilter},
+            onSelectionChanged: (Set<String> newSelection) {
+              setState(() {
+                _selectedFilter = newSelection.first;
+                _isLoading = true;
+              });
+              _loadMoodEntries();
+            },
+            style: ButtonStyle(
+              visualDensity: VisualDensity.compact,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
-            const SizedBox(height: 12),
-            SegmentedButton<String>(
-              segments: const [
-                ButtonSegment(value: 'week', label: Text('Week')),
-                ButtonSegment(value: 'month', label: Text('Month')),
-                ButtonSegment(value: 'all', label: Text('All')),
-              ],
-              selected: {_selectedFilter},
-              onSelectionChanged: (Set<String> newSelection) {
-                setState(() {
-                  _selectedFilter = newSelection.first;
-                  _isLoading = true;
-                });
-                _loadMoodEntries();
-              },
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -278,13 +314,18 @@ class _UserMoodSummaryScreenState extends State<UserMoodSummaryScreen> {
   Widget _buildMoodStatistics() {
     final colorScheme = Theme.of(context).colorScheme;
     if (_moodEntries.isEmpty) {
-      return Card(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Center(
-            child: Text(
-              'No mood entries for this period',
-              style: Theme.of(context).textTheme.bodyLarge,
+      return Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: Colors.grey.withOpacity(0.1)),
+        ),
+        child: Center(
+          child: Text(
+            'No mood entries for this period',
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              color: colorScheme.onSurfaceVariant,
             ),
           ),
         ),
@@ -306,40 +347,66 @@ class _UserMoodSummaryScreenState extends State<UserMoodSummaryScreen> {
         .reduce((a, b) => a.value > b.value ? a : b)
         .key;
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Mood Statistics',
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.grey.withOpacity(0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Mood Statistics',
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 20),
+          _buildStatRow('Total Entries', _moodEntries.length.toString()),
+          const Divider(height: 24),
+          _buildStatRow('Analyzed Entries', completedEntries.length.toString()),
+          const Divider(height: 24),
+          _buildStatRow(
+            'Most Common Mood',
+            _capitalize(mostCommonEmotion),
+            color: _getEmotionColor(mostCommonEmotion),
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+              borderRadius: BorderRadius.circular(12),
             ),
-            const SizedBox(height: 16),
-            _buildStatRow('Total Entries', _moodEntries.length.toString()),
-            const SizedBox(height: 8),
-            _buildStatRow(
-              'Analyzed Entries',
-              completedEntries.length.toString(),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.info_outline_rounded,
+                  size: 16,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Based on analyzed entries for the selected period.',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 8),
-            _buildStatRow(
-              'Most Common Mood',
-              _capitalize(mostCommonEmotion),
-              color: _getEmotionColor(mostCommonEmotion),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Based on analyzed entries for the selected period.',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -359,6 +426,7 @@ class _UserMoodSummaryScreenState extends State<UserMoodSummaryScreen> {
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
             fontWeight: FontWeight.bold,
             color: color,
+            fontSize: 16,
           ),
         ),
       ],
@@ -385,70 +453,82 @@ class _UserMoodSummaryScreenState extends State<UserMoodSummaryScreen> {
       emotionCounts[emotion] = (emotionCounts[emotion] ?? 0) + 1;
     }
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Mood Distribution',
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 200,
-              child: PieChart(
-                PieChartData(
-                  sections: emotionCounts.entries.map((entry) {
-                    final percentage =
-                        (entry.value / completedEntries.length) * 100;
-                    return PieChartSectionData(
-                      value: entry.value.toDouble(),
-                      title: '${percentage.toStringAsFixed(1)}%',
-                      color: _getEmotionColor(entry.key),
-                      radius: 60,
-                      titleStyle: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    );
-                  }).toList(),
-                  sectionsSpace: 2,
-                  centerSpaceRadius: 40,
-                ),
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.grey.withOpacity(0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Mood Distribution',
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 24),
+          SizedBox(
+            height: 200,
+            child: PieChart(
+              PieChartData(
+                sections: emotionCounts.entries.map((entry) {
+                  final percentage =
+                      (entry.value / completedEntries.length) * 100;
+                  return PieChartSectionData(
+                    value: entry.value.toDouble(),
+                    title: '${percentage.toStringAsFixed(1)}%',
+                    color: _getEmotionColor(entry.key),
+                    radius: 60,
+                    titleStyle: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  );
+                }).toList(),
+                sectionsSpace: 2,
+                centerSpaceRadius: 40,
               ),
             ),
-            const SizedBox(height: 16),
-            Wrap(
-              spacing: 16,
-              runSpacing: 8,
-              children: emotionCounts.entries.map((entry) {
-                return Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 16,
-                      height: 16,
-                      decoration: BoxDecoration(
-                        color: _getEmotionColor(entry.key),
-                        shape: BoxShape.circle,
-                      ),
+          ),
+          const SizedBox(height: 24),
+          Wrap(
+            spacing: 16,
+            runSpacing: 8,
+            children: emotionCounts.entries.map((entry) {
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 12,
+                    height: 12,
+                    decoration: BoxDecoration(
+                      color: _getEmotionColor(entry.key),
+                      shape: BoxShape.circle,
                     ),
-                    const SizedBox(width: 8),
-                    Text(
-                      '${_capitalize(entry.key)} (${entry.value})',
-                      style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '${_capitalize(entry.key)} (${entry.value})',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.w500,
                     ),
-                  ],
-                );
-              }).toList(),
-            ),
-          ],
-        ),
+                  ),
+                ],
+              );
+            }).toList(),
+          ),
+        ],
       ),
     );
   }
@@ -467,17 +547,29 @@ class _UserMoodSummaryScreenState extends State<UserMoodSummaryScreen> {
             context,
           ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
         ...(_moodEntries.take(10).map((entry) => _buildEntryCard(entry))),
       ],
     );
   }
 
   Widget _buildEntryCard(MoodEntry entry) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.grey.withOpacity(0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -491,12 +583,8 @@ class _UserMoodSummaryScreenState extends State<UserMoodSummaryScreen> {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: _getEmotionColor(entry.emotion!).withAlpha(26),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: _getEmotionColor(entry.emotion!),
-                        width: 1,
-                      ),
+                      color: _getEmotionColor(entry.emotion!).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       _capitalize(entry.emotion!),
@@ -518,7 +606,9 @@ class _UserMoodSummaryScreenState extends State<UserMoodSummaryScreen> {
             const SizedBox(height: 12),
             Text(
               entry.text,
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(height: 1.5),
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
             ),

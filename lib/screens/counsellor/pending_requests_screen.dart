@@ -122,7 +122,7 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Pending Requests')),
+      appBar: AppBar(title: const Text('Pending Requests'), centerTitle: true),
       body: _buildBody(),
     );
   }
@@ -139,7 +139,11 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 64, color: colorScheme.error),
+            Icon(
+              Icons.error_outline_rounded,
+              size: 64,
+              color: colorScheme.error,
+            ),
             const SizedBox(height: 16),
             Text(
               'Failed to load requests',
@@ -157,7 +161,11 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.inbox, size: 64, color: colorScheme.onSurfaceVariant),
+            Icon(
+              Icons.inbox_rounded,
+              size: 64,
+              color: colorScheme.onSurfaceVariant,
+            ),
             const SizedBox(height: 16),
             Text(
               'No pending requests',
@@ -190,26 +198,47 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
     String userEmail,
   ) {
     final colorScheme = Theme.of(context).colorScheme;
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.grey.withOpacity(0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                CircleAvatar(
-                  backgroundColor: colorScheme.secondaryContainer,
-                  child: Text(
-                    userName.isNotEmpty ? userName[0].toUpperCase() : '?',
-                    style: TextStyle(
-                      color: colorScheme.onSecondaryContainer,
-                      fontWeight: FontWeight.w700,
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: colorScheme.secondary.withOpacity(0.2),
+                      width: 2,
+                    ),
+                  ),
+                  child: CircleAvatar(
+                    backgroundColor: colorScheme.secondaryContainer,
+                    child: Text(
+                      userName.isNotEmpty ? userName[0].toUpperCase() : '?',
+                      style: TextStyle(
+                        color: colorScheme.onSecondaryContainer,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -218,7 +247,7 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
                         userName,
                         style: const TextStyle(
                           fontSize: 16,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -234,29 +263,42 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const Divider(height: 32),
             if (request.message != null && request.message!.isNotEmpty) ...[
               Text(
-                'Message:',
+                'Message',
                 style: TextStyle(
                   fontSize: 12,
                   color: colorScheme.onSurfaceVariant,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.5,
                 ),
               ),
-              const SizedBox(height: 4),
-              Text(request.message!, style: const TextStyle(fontSize: 14)),
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
+              Text(
+                request.message!,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: colorScheme.onSurface,
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: 20),
             ],
             Row(
               children: [
-                Icon(Icons.access_time, size: 16, color: Colors.grey[600]),
-                const SizedBox(width: 4),
+                Icon(
+                  Icons.access_time_rounded,
+                  size: 16,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(width: 6),
                 Text(
                   _formatDate(request.createdAt),
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 13,
                     color: colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 const Spacer(),
@@ -264,11 +306,14 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
                   onPressed: () => _acceptRequest(request.id),
                   style: FilledButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 10,
+                      horizontal: 24,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text('Accept'),
+                  child: const Text('Accept Request'),
                 ),
               ],
             ),

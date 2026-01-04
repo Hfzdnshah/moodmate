@@ -23,10 +23,11 @@ class _MoodTrendsScreenState extends State<MoodTrendsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mood trends'),
+        title: const Text('Mood Trends'),
+        centerTitle: true,
         actions: [
           PopupMenuButton<String>(
-            icon: const Icon(Icons.show_chart),
+            icon: const Icon(Icons.bar_chart_rounded),
             onSelected: (value) => setState(() => _chartType = value),
             itemBuilder: (context) => [
               const PopupMenuItem(value: 'line', child: Text('Line Chart')),
@@ -41,38 +42,53 @@ class _MoodTrendsScreenState extends State<MoodTrendsScreen> {
       ),
       body: Column(
         children: [
+          const SizedBox(height: 16),
           _buildTimeRangeSelector(),
-          Expanded(child: _buildChart()),
+          const SizedBox(height: 16),
+          Expanded(
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: Colors.grey.withOpacity(0.1)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.02),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: _buildChart(),
+            ),
+          ),
+          const SizedBox(height: 16),
           _buildEmotionLegend(),
+          const SizedBox(height: 16),
         ],
       ),
     );
   }
 
   Widget _buildTimeRangeSelector() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
-      child: Wrap(
-        spacing: 8,
-        children: [
-          _buildTimeRangeChip('7 days', 7),
-          _buildTimeRangeChip('14 days', 14),
-          _buildTimeRangeChip('30 days', 30),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTimeRangeChip(String label, int days) {
-    final isSelected = _daysToShow == days;
-    return ChoiceChip(
-      label: Text(label),
-      selected: isSelected,
-      onSelected: (selected) {
-        if (selected) {
-          setState(() => _daysToShow = days);
-        }
+    return SegmentedButton<int>(
+      segments: const [
+        ButtonSegment(value: 7, label: Text('7 Days')),
+        ButtonSegment(value: 14, label: Text('14 Days')),
+        ButtonSegment(value: 30, label: Text('30 Days')),
+      ],
+      selected: {_daysToShow},
+      onSelectionChanged: (Set<int> newSelection) {
+        setState(() {
+          _daysToShow = newSelection.first;
+        });
       },
+      style: ButtonStyle(
+        visualDensity: VisualDensity.compact,
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      ),
     );
   }
 
@@ -478,20 +494,27 @@ class _MoodTrendsScreenState extends State<MoodTrendsScreen> {
   }
 
   Widget _buildEmotionLegend() {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        border: Border(top: BorderSide(color: Colors.grey.shade300)),
+        color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Emotion Legend', style: Theme.of(context).textTheme.titleSmall),
-          const SizedBox(height: 8),
+          Text(
+            'Emotion Legend',
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 12),
           Wrap(
-            spacing: 8,
-            runSpacing: 4,
+            spacing: 12,
+            runSpacing: 8,
             children: [
               _buildLegendItem('Joy/Excitement', Colors.amber),
               _buildLegendItem('Content/Peaceful', Colors.green),

@@ -110,7 +110,7 @@ class _MoodEntryScreenState extends State<MoodEntryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Daily mood entry')),
+      appBar: AppBar(title: const Text('Daily Check-in'), centerTitle: true),
       body: _isCheckingEntry
           ? const Center(child: CircularProgressIndicator())
           : _hasEntryToday
@@ -125,41 +125,48 @@ class _MoodEntryScreenState extends State<MoodEntryScreen> {
 
     return Center(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+        padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: colorScheme.secondaryContainer,
+                color: colorScheme.primaryContainer.withOpacity(0.3),
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                Icons.check_circle,
-                size: 80,
-                color: colorScheme.onSecondaryContainer,
+                Icons.check_circle_rounded,
+                size: 64,
+                color: colorScheme.primary,
               ),
             ),
             const SizedBox(height: 24),
             Text(
-              'Already Submitted',
-              style: Theme.of(
-                context,
-              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+              'All Caught Up!',
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: colorScheme.onSurface,
+              ),
             ),
             const SizedBox(height: 12),
             Text(
-              'You\'ve already made a mood entry today. Come back tomorrow to track your mood again!',
+              'You\'ve already checked in today.\nCome back tomorrow!',
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              style: theme.textTheme.bodyLarge?.copyWith(
                 color: colorScheme.onSurfaceVariant,
               ),
             ),
             const SizedBox(height: 32),
             FilledButton.tonal(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Back to home'),
+              style: FilledButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 16,
+                ),
+              ),
+              child: const Text('Back to Home'),
             ),
           ],
         ),
@@ -172,49 +179,50 @@ class _MoodEntryScreenState extends State<MoodEntryScreen> {
     final colorScheme = theme.colorScheme;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+      padding: const EdgeInsets.all(24),
       child: Form(
         key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Info card
-            Card(
-              color: colorScheme.primaryContainer,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.info_outline,
-                      color: colorScheme.onPrimaryContainer,
+            // Date Header
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.calendar_today_rounded,
+                    size: 18,
+                    color: colorScheme.primary,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    _formatDate(DateTime.now()),
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: colorScheme.onSurfaceVariant,
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        'Share how you\'re feeling today. Our AI will analyze your entry and provide insights.',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: colorScheme.onPrimaryContainer,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 24),
 
-            // Date display
             Text(
-              'Today\'s Entry',
-              style: Theme.of(
-                context,
-              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+              'How are you feeling?',
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 8),
             Text(
-              _formatDate(DateTime.now()),
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              'Share your thoughts and feelings. Our AI will help analyze them.',
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: colorScheme.onSurfaceVariant,
               ),
             ),
@@ -223,12 +231,19 @@ class _MoodEntryScreenState extends State<MoodEntryScreen> {
             // Mood text input
             TextFormField(
               controller: _textController,
-              decoration: const InputDecoration(
-                labelText: 'How are you feeling?',
-                hintText: 'Describe your mood, thoughts, and feelings...',
+              decoration: InputDecoration(
+                hintText: 'I am feeling...',
                 alignLabelWithHint: true,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: BorderSide.none,
+                ),
+                filled: true,
+                fillColor: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                contentPadding: const EdgeInsets.all(20),
               ),
-              maxLines: 10,
+              style: theme.textTheme.bodyLarge,
+              maxLines: 12,
               minLines: 6,
               maxLength: 1000,
               validator: (value) {
@@ -244,35 +259,41 @@ class _MoodEntryScreenState extends State<MoodEntryScreen> {
             ),
             const SizedBox(height: 24),
 
-            // Tips card
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.lightbulb_outline,
-                          color: colorScheme.tertiary,
-                          size: 20,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Tips for a good entry',
-                          style: Theme.of(context).textTheme.titleSmall
-                              ?.copyWith(fontWeight: FontWeight.w700),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    _buildTip('Be honest about your feelings'),
-                    _buildTip('Describe what happened today'),
-                    _buildTip('Note any physical sensations'),
-                    _buildTip('Express your emotions freely'),
-                  ],
+            // Tips
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: colorScheme.secondaryContainer.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: colorScheme.secondaryContainer.withOpacity(0.4),
                 ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.lightbulb_rounded,
+                        color: colorScheme.secondary,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Writing Tips',
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: colorScheme.secondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  _buildTip('Be honest about your feelings'),
+                  _buildTip('Describe what happened today'),
+                  _buildTip('Note any physical sensations'),
+                ],
               ),
             ),
             const SizedBox(height: 32),
@@ -282,13 +303,19 @@ class _MoodEntryScreenState extends State<MoodEntryScreen> {
               width: double.infinity,
               child: FilledButton(
                 onPressed: _isSubmitting ? null : _submitMoodEntry,
+                style: FilledButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
                 child: _isSubmitting
                     ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                        height: 24,
+                        width: 24,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          color: Colors.white,
+                        ),
                       )
-                    : const Text('Submit entry'),
+                    : const Text('Analyze Entry'),
               ),
             ),
           ],

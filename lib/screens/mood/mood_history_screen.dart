@@ -31,23 +31,31 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mood History'),
+        centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.search),
+            icon: const Icon(Icons.search_rounded),
             onPressed: _showSearchDialog,
           ),
           IconButton(
-            icon: const Icon(Icons.filter_list),
+            icon: const Icon(Icons.filter_list_rounded),
             onPressed: _showFilterDialog,
           ),
         ],
       ),
       body: Column(
         children: [
-          if (_filterOption != 'all') _buildFilterChip(),
+          if (_filterOption != 'all')
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              child: _buildFilterChip(),
+            ),
           Expanded(child: _buildMoodList()),
         ],
       ),
@@ -73,21 +81,21 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
         break;
     }
 
-    return Container(
-      padding: const EdgeInsets.all(8.0),
-      child: Chip(
-        label: Text(filterText),
-        deleteIcon: const Icon(Icons.close),
-        side: BorderSide(color: colorScheme.outlineVariant),
-        onDeleted: () {
-          setState(() {
-            _filterOption = 'all';
-            _selectedDateRange = null;
-            _lastDocument = null;
-            _hasMore = true;
-          });
-        },
-      ),
+    return Chip(
+      label: Text(filterText),
+      deleteIcon: const Icon(Icons.close_rounded, size: 18),
+      backgroundColor: colorScheme.secondaryContainer,
+      labelStyle: TextStyle(color: colorScheme.onSecondaryContainer),
+      side: BorderSide.none,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      onDeleted: () {
+        setState(() {
+          _filterOption = 'all';
+          _selectedDateRange = null;
+          _lastDocument = null;
+          _hasMore = true;
+        });
+      },
     );
   }
 
@@ -247,105 +255,126 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
     final emotionColor = _getEmotionColor(emotion);
     final emotionIcon = _getEmotionIcon(emotion);
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => MoodEntryDetailScreen(entryId: entry.id),
-            ),
-          );
-        },
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: emotionColor.withAlpha(51),
-                      borderRadius: BorderRadius.circular(8),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.grey.withOpacity(0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MoodEntryDetailScreen(entryId: entry.id),
+              ),
+            );
+          },
+          borderRadius: BorderRadius.circular(24),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: emotionColor.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(emotionIcon, color: emotionColor, size: 24),
                     ),
-                    child: Icon(emotionIcon, color: emotionColor, size: 24),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          emotion.toUpperCase(),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            emotion.toUpperCase(),
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: emotionColor,
+                              letterSpacing: 1.2,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '$dateStr • $timeStr',
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(color: colorScheme.onSurfaceVariant),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (entry.confidenceScore != null)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: colorScheme.surfaceContainerHighest,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          '${(entry.confidenceScore! * 100).toInt()}%',
                           style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: emotionColor,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: colorScheme.onSurfaceVariant,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  entry.text,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    height: 1.5,
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+                if (entry.recommendations != null &&
+                    entry.recommendations!.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.lightbulb_rounded,
+                          size: 18,
+                          color: colorScheme.tertiary,
+                        ),
+                        const SizedBox(width: 8),
                         Text(
-                          '$dateStr at $timeStr',
-                          style: Theme.of(context).textTheme.bodySmall,
+                          '${entry.recommendations!.length} recommendations',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: colorScheme.tertiary,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  if (entry.confidenceScore != null)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: colorScheme.surfaceContainerHighest,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        '${(entry.confidenceScore! * 100).toInt()}%',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Text(
-                entry.text,
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              if (entry.recommendations != null &&
-                  entry.recommendations!.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.lightbulb_outline,
-                        size: 16,
-                        color: colorScheme.tertiary,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${entry.recommendations!.length} recommendations',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: colorScheme.onSurfaceVariant,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

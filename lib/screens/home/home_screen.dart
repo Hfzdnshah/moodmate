@@ -23,128 +23,147 @@ class HomeScreen extends StatelessWidget {
       builder: (context, authProvider, child) {
         final user = authProvider.userModel;
 
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text('MoodMate'),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.logout),
-                tooltip: 'Sign Out',
-                onPressed: () async {
-                  final confirm = await showDialog<bool>(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text('Sign Out'),
-                      content: const Text('Are you sure you want to sign out?'),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(false),
-                          child: const Text('Cancel'),
-                        ),
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(true),
-                          child: const Text('Sign Out'),
-                        ),
-                      ],
-                    ),
-                  );
+        if (user == null) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
 
-                  if (confirm == true) {
-                    await authProvider.signOut();
-                  }
-                },
-              ),
-            ],
-          ),
-          body: user == null
-              ? const Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+        return Scaffold(
+          body: SafeArea(
+            child: Column(
+              children: [
+                // Custom Header
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                  child: Row(
                     children: [
-                      // Welcome card
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  CircleAvatar(
-                                    radius: 30,
-                                    backgroundColor: colorScheme.primary,
-                                    child: Text(
-                                      user.name.isNotEmpty
-                                          ? user.name[0].toUpperCase()
-                                          : 'U',
-                                      style: TextStyle(
-                                        fontSize: 28,
-                                        color: colorScheme.onPrimary,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Welcome back,',
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                            Text(
+                              user.name,
+                              style: theme.textTheme.headlineMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: colorScheme.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: colorScheme.surfaceContainerHighest,
+                          shape: BoxShape.circle,
+                        ),
+                        child: IconButton(
+                          icon: const Icon(Icons.logout_rounded),
+                          color: colorScheme.onSurfaceVariant,
+                          onPressed: () async {
+                            final confirm = await showDialog<bool>(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Sign Out'),
+                                content: const Text(
+                                  'Are you sure you want to sign out?',
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(false),
+                                    child: const Text('Cancel'),
                                   ),
-                                  const SizedBox(width: 16),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Welcome back,',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium
-                                              ?.copyWith(
-                                                color: colorScheme
-                                                    .onSurfaceVariant,
-                                              ),
-                                        ),
-                                        Text(
-                                          user.name,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .headlineSmall
-                                              ?.copyWith(
-                                                fontWeight: FontWeight.w700,
-                                              ),
-                                        ),
-                                      ],
-                                    ),
+                                  FilledButton(
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(true),
+                                    child: const Text('Sign Out'),
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 12),
-                              Chip(
-                                label: Text(
-                                  _getRoleDisplayName(user.role),
-                                  style: TextStyle(
-                                    color: colorScheme.onSecondaryContainer,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                backgroundColor: _getRoleColor(
-                                  user.role,
-                                  colorScheme,
-                                ),
-                              ),
-                            ],
-                          ),
+                            );
+
+                            if (confirm == true) {
+                              await authProvider.signOut();
+                            }
+                          },
                         ),
                       ),
-                      const SizedBox(height: 24),
-
-                      // Dashboard content based on role
-                      if (user.role == UserRole.user) ...[
-                        _buildUserDashboard(context),
-                      ] else if (user.role == UserRole.counsellor) ...[
-                        _buildCounsellorDashboard(context),
-                      ],
                     ],
                   ),
                 ),
+
+                // Role Badge
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: _getRoleColor(
+                          user.role,
+                          colorScheme,
+                        ).withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: _getRoleColor(
+                            user.role,
+                            colorScheme,
+                          ).withOpacity(0.5),
+                        ),
+                      ),
+                      child: Text(
+                        _getRoleDisplayName(user.role),
+                        style: TextStyle(
+                          color: _getRoleColor(user.role, colorScheme),
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Dashboard Grid
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 8,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Dashboard',
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        if (user.role == UserRole.user)
+                          _buildUserGrid(context)
+                        else if (user.role == UserRole.counsellor)
+                          _buildCounsellorGrid(context),
+                        const SizedBox(height: 24),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );
@@ -164,177 +183,133 @@ class HomeScreen extends StatelessWidget {
   Color _getRoleColor(UserRole role, ColorScheme colorScheme) {
     switch (role) {
       case UserRole.user:
-        return colorScheme.secondaryContainer;
+        return colorScheme.primary;
       case UserRole.counsellor:
-        return colorScheme.tertiaryContainer;
+        return colorScheme.tertiary;
       case UserRole.admin:
-        return colorScheme.primaryContainer;
+        return colorScheme.error;
     }
   }
 
-  Widget _buildUserDashboard(BuildContext context) {
+  Widget _buildUserGrid(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return GridView.count(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisCount: 2,
+      mainAxisSpacing: 16,
+      crossAxisSpacing: 16,
+      childAspectRatio: 1.1,
       children: [
-        Text(
-          'Your Dashboard',
-          style: Theme.of(
-            context,
-          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
-
-        // Mood tracking card
-        _buildFeatureCard(
+        _buildDashboardCard(
           context,
-          icon: Icons.edit_note,
-          title: 'Daily Mood Entry',
-          subtitle: 'Track your mood today',
+          icon: Icons.edit_note_rounded,
+          title: 'Log Mood',
+          subtitle: 'How are you?',
           color: colorScheme.primary,
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const MoodEntryScreen()),
-            );
-          },
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const MoodEntryScreen()),
+          ),
         ),
-        const SizedBox(height: 12),
-
-        // History card
-        _buildFeatureCard(
+        _buildDashboardCard(
           context,
-          icon: Icons.history,
-          title: 'Mood History',
-          subtitle: 'View your past entries',
+          icon: Icons.history_rounded,
+          title: 'History',
+          subtitle: 'Past entries',
           color: colorScheme.secondary,
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const MoodHistoryScreen(),
-              ),
-            );
-          },
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const MoodHistoryScreen()),
+          ),
         ),
-        const SizedBox(height: 12),
-
-        // Trends card
-        _buildFeatureCard(
+        _buildDashboardCard(
           context,
-          icon: Icons.show_chart,
-          title: 'Mood Trends',
-          subtitle: 'Visualize your mood patterns',
+          icon: Icons.show_chart_rounded,
+          title: 'Trends',
+          subtitle: 'Your patterns',
           color: colorScheme.tertiary,
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const MoodTrendsScreen()),
-            );
-          },
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const MoodTrendsScreen()),
+          ),
         ),
-        const SizedBox(height: 12),
-
-        // Counsellor card
-        _buildFeatureCard(
+        _buildDashboardCard(
           context,
-          icon: Icons.support_agent,
-          title: 'Contact Counsellor',
-          subtitle: 'Connect with a professional',
-          color: colorScheme.primary,
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const CounsellorListScreen(),
-              ),
-            );
-          },
+          icon: Icons.support_agent_rounded,
+          title: 'Counsellor',
+          subtitle: 'Get help',
+          color: Colors.orange,
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const CounsellorListScreen(),
+            ),
+          ),
         ),
-        const SizedBox(height: 12),
-
-        // Support requests card
-        _buildFeatureCard(
+        _buildDashboardCard(
           context,
-          icon: Icons.question_answer,
-          title: 'My Support Requests',
-          subtitle: 'View your requests',
-          color: colorScheme.secondary,
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const SupportRequestsScreen(),
-              ),
-            );
-          },
+          icon: Icons.chat_bubble_outline_rounded,
+          title: 'Requests',
+          subtitle: 'Support status',
+          color: Colors.indigo,
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const SupportRequestsScreen(),
+            ),
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildCounsellorDashboard(BuildContext context) {
+  Widget _buildCounsellorGrid(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return GridView.count(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisCount: 2,
+      mainAxisSpacing: 16,
+      crossAxisSpacing: 16,
+      childAspectRatio: 1.1,
       children: [
-        Text(
-          'Counsellor Dashboard',
-          style: Theme.of(
-            context,
-          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
-
-        // My clients card
-        _buildFeatureCard(
+        _buildDashboardCard(
           context,
-          icon: Icons.people_alt,
+          icon: Icons.people_alt_rounded,
           title: 'My Clients',
-          subtitle: 'View your assigned clients',
+          subtitle: 'Manage clients',
           color: colorScheme.primary,
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const CounsellorDashboardScreen(),
-              ),
-            );
-          },
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const CounsellorDashboardScreen(),
+            ),
+          ),
         ),
-        const SizedBox(height: 12),
-
-        // Pending requests card
-        _buildFeatureCard(
+        _buildDashboardCard(
           context,
-          icon: Icons.pending_actions,
-          title: 'Pending Requests',
-          subtitle: 'Accept new support requests',
+          icon: Icons.pending_actions_rounded,
+          title: 'Requests',
+          subtitle: 'New clients',
           color: colorScheme.secondary,
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const PendingRequestsScreen(),
-              ),
-            );
-          },
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const PendingRequestsScreen(),
+            ),
+          ),
         ),
-        const SizedBox(height: 12),
-
-        // Messages card
-        _buildFeatureCard(
+        _buildDashboardCard(
           context,
-          icon: Icons.message,
+          icon: Icons.message_rounded,
           title: 'Messages',
-          subtitle: 'Chat with your clients',
+          subtitle: 'Chat',
           color: colorScheme.tertiary,
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const CounsellorMessagesScreen(),
-              ),
-            );
-          },
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const CounsellorMessagesScreen(),
+            ),
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildFeatureCard(
+  Widget _buildDashboardCard(
     BuildContext context, {
     required IconData icon,
     required String title,
@@ -342,48 +317,59 @@ class HomeScreen extends StatelessWidget {
     required Color color,
     required VoidCallback onTap,
   }) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+
     return Card(
+      elevation: 0,
+      color: color.withOpacity(0.1),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+        side: BorderSide(color: color.withOpacity(0.2)),
+      ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(24),
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: color.withAlpha(26),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(icon, color: color, size: 32),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      subtitle,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                      ),
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: color.withOpacity(0.2),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
+                child: Icon(icon, color: color, size: 24),
               ),
-              Icon(
-                Icons.arrow_forward_ios,
-                size: 16,
-                color: colorScheme.onSurfaceVariant,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
               ),
             ],
           ),
