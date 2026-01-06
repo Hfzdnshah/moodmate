@@ -1,16 +1,54 @@
-# moodmate
+# MoodMate 🌙🧠  
+*A lightweight mood check-in & reflection app (Flutter)*
 
-A new Flutter project.
+[![Flutter](https://img.shields.io/badge/Flutter-Framework-blue)](https://flutter.dev/)
+[![Dart](https://img.shields.io/badge/Dart-Language-informational)](https://dart.dev/)
+[![Status](https://img.shields.io/badge/Status-In%20Progress-yellow)](#)
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## ✨ Overview
+**MoodMate** helps users track their emotions through quick daily mood check-ins, short notes (optional), and a simple mood history view for reflection.  
+Built with **Flutter**, designed to be clean, fast, and easy to use.
 
-A few resources to get you started if this is your first Flutter project:
+---
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## 🎯 Objectives
+- Enable fast mood check-in (under 1 minute)
+- Store mood entries with optional notes
+- Display mood history clearly (list + details)
+- Provide basic self-care tips (MVP)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+---
+
+## ✅ MVP Features
+- Mood check-in (mood + optional note)
+- Mood history (sorted by date/time)
+- Entry details view
+- Tips page (static content)
+- Clean navigation + empty states
+
+### 🔜 Future Improvements
+- Reminders / notifications
+- Weekly summary / simple analytics
+- Tags (work, family, study, etc.)
+- Cloud sync (optional)
+
+---
+
+## 🧩 Tech Stack
+- **Flutter / Dart**
+- Storage: *(choose one based on your implementation)*
+  - Local storage (simple MVP)  
+  - Firebase/Firestore (if enabled)
+
+---
+
+## 📂 Project Structure (Main)
+```text
+moodmate/
+├─ lib/                 # Flutter source code
+├─ test/                # Unit/widget tests (if any)
+├─ android/ ios/ web/   # Platform folders
+├─ docs/                # Evidence & documentation (proposal, UML, etc.)
+└─ README.md
